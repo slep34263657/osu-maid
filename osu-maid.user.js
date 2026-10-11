@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.4
+// @version      1.0.5
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -468,7 +468,6 @@ const modeStyle = document.createElement("style");
 modeStyle.textContent = `
 .osu-maid-mode {
   display: inline-flex;
-  margin-left: 24px;
   align-items: center;
   gap: 8px;
   font-size: 12px;
@@ -504,19 +503,29 @@ modeStyle.textContent = `
 `;
 document.documentElement.appendChild(modeStyle);
 
-function findModeRow() {
+function filterRow(title) {
   const head = [...document.querySelectorAll(".beatmapsets-search-filter__header")].find(
-    (el) => el.textContent.trim().toLowerCase() === "mode",
+    (el) => el.textContent.trim().toLowerCase() === title,
   );
-  return head?.closest(".beatmapsets-search-filter") || head?.parentElement;
+  return head?.closest(".beatmapsets-search-filter");
 }
 
 function mountModeToggle() {
-  const row = findModeRow();
-  if (!row || row.querySelector(".osu-maid-mode")) return;
+  if (document.querySelector(".osu-maid-mode")) return;
+  const anchor = filterRow("played") || filterRow("mode");
+  if (!anchor) return;
+  const row = document.createElement("div");
+  row.className = "beatmapsets-search-filter";
+  const head = document.createElement("span");
+  head.className = "beatmapsets-search-filter__header";
+  head.textContent = "Remember";
+  const items = document.createElement("div");
+  items.className = "beatmapsets-search-filter__items";
   const label = document.createElement("label");
   label.className = "osu-maid-mode";
-  label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember mode</span>';
+  label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember selected mode</span>';
+  items.appendChild(label);
+  row.append(head, items);
   label.toggleAttribute("data-on", rememberOn());
   label.addEventListener("click", (e) => {
     e.preventDefault();
@@ -526,7 +535,7 @@ function mountModeToggle() {
     if (on) saveMode();
     else saveKey(MODE_VAL, null);
   });
-  row.appendChild(label);
+  anchor.after(row);
 }
 
 new MutationObserver(mountModeToggle).observe(document.documentElement, {
