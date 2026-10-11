@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.5.4
+// @version      1.6.0
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -166,6 +166,133 @@ function schedule() {
 }
 
 new MutationObserver(schedule).observe(document.documentElement, {
+  childList: true,
+  subtree: true,
+});
+
+const MODE_ON = "osu-maid:remember-mode";
+const MODE_VAL = "osu-maid:mode";
+
+function store(key, value) {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {}
+}
+
+function load(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function rememberOn() {
+  return load(MODE_ON) === "1";
+}
+
+function withSavedMode(url) {
+  const mode = load(MODE_VAL);
+  if (!rememberOn() || !mode) return null;
+  if (url.pathname.replace(/\/$/, "") !== "/beatmapsets" || url.searchParams.has("m")) return null;
+  url.searchParams.set("m", mode);
+  return url;
+}
+
+const startUrl = withSavedMode(new URL(location.href));
+if (startUrl) location.replace(startUrl.href);
+
+function saveMode() {
+  if (!rememberOn() || location.pathname.replace(/\/$/, "") !== "/beatmapsets") return;
+  const m = new URLSearchParams(location.search).get("m");
+  store(MODE_VAL, m === null ? "" : m);
+}
+
+for (const name of ["pushState", "replaceState"]) {
+  const native = history[name];
+  history[name] = function () {
+    const result = native.apply(this, arguments);
+    saveMode();
+    return result;
+  };
+}
+window.addEventListener("popstate", saveMode);
+
+document.addEventListener(
+  "click",
+  (e) => {
+    const a = e.target.closest?.("a[href]");
+    if (!a || a.origin !== location.origin) return;
+    const url = withSavedMode(new URL(a.href));
+    if (url) a.href = url.href;
+  },
+  true,
+);
+
+const modeStyle = document.createElement("style");
+modeStyle.textContent = `
+.beatmapsets-search { position: relative; }
+.osu-maid-mode {
+  position: absolute;
+  right: 20px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
+}
+.osu-maid-mode__track {
+  width: 30px;
+  height: 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .2);
+  position: relative;
+  transition: background .15s;
+}
+.osu-maid-mode__track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .15s;
+}
+.osu-maid-mode[data-on] .osu-maid-mode__track {
+  background: hsl(var(--hsl-pink-1, 333 100% 55%));
+}
+.osu-maid-mode[data-on] .osu-maid-mode__track::after {
+  transform: translateX(14px);
+}
+`;
+document.documentElement.appendChild(modeStyle);
+
+function mountModeToggle() {
+  const host = document.querySelector(".beatmapsets-search");
+  if (!host || host.querySelector(".osu-maid-mode")) return;
+  const label = document.createElement("label");
+  label.className = "osu-maid-mode";
+  label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember mode</span>';
+  label.toggleAttribute("data-on", rememberOn());
+  label.addEventListener("click", (e) => {
+    e.preventDefault();
+    const on = !rememberOn();
+    store(MODE_ON, on ? "1" : null);
+    label.toggleAttribute("data-on", on);
+    if (on) saveMode();
+    else store(MODE_VAL, null);
+  });
+  host.appendChild(label);
+}
+
+new MutationObserver(mountModeToggle).observe(document.documentElement, {
   childList: true,
   subtree: true,
 });
