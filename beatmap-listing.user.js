@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.7.0
+// @version      1.7.1
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -232,7 +232,7 @@ document.addEventListener(
 
 const modeStyle = document.createElement("style");
 modeStyle.textContent = `
-.header-v4--beatmapsets .header-v4__content { position: relative; }
+[class*="header-v4--beatmapset"] .header-v4__row--title { position: relative; }
 .osu-maid-gear {
   position: absolute;
   top: 50%;
@@ -264,7 +264,7 @@ modeStyle.textContent = `
   background: rgba(10, 10, 10, .95);
   border: 1px solid rgba(255, 255, 255, .1);
 }
-.osu-maid-gear[data-open] .osu-maid-gear__menu {
+.osu-maid-gear[data-open] .osu-maid-gear__menu:not(:empty) {
   display: block;
 }
 .osu-maid-mode {
@@ -306,7 +306,8 @@ modeStyle.textContent = `
 document.documentElement.appendChild(modeStyle);
 
 function mountModeToggle() {
-  const host = document.querySelector(".header-v4--beatmapsets .header-v4__content");
+  if (!/^\/beatmapsets(\/\d+)?\/?$/.test(location.pathname)) return;
+  const host = document.querySelector('[class*="header-v4--beatmapset"] .header-v4__row--title');
   if (!host || host.querySelector(".osu-maid-gear")) return;
 
   const gear = document.createElement("div");
@@ -316,6 +317,7 @@ function mountModeToggle() {
     '<div class="osu-maid-gear__menu"></div>';
   const menu = gear.querySelector(".osu-maid-gear__menu");
 
+  const isListing = location.pathname.replace(/\/$/, "") === "/beatmapsets";
   const label = document.createElement("label");
   label.className = "osu-maid-mode";
   label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember selected mode</span>';
@@ -328,7 +330,7 @@ function mountModeToggle() {
     if (on) saveMode();
     else saveKey(MODE_VAL, null);
   });
-  menu.appendChild(label);
+  if (isListing) menu.appendChild(label);
 
   gear.querySelector(".osu-maid-gear__button").addEventListener("click", () => {
     gear.toggleAttribute("data-open");
