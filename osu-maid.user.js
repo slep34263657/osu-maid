@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.11
+// @version      1.0.12
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -601,8 +601,10 @@ function fixTimes() {
 
 new MutationObserver(fixTimes).observe(document.documentElement, {
   childList: true,
+  characterData: true,
   subtree: true,
 });
+setInterval(fixTimes, 1000);
 fixTimes();
 })();
 } catch (err) {

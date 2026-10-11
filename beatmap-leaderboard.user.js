@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Leaderboard Minutes
-// @version      1.0.1
+// @version      1.0.2
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-leaderboard.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-leaderboard.user.js
@@ -23,6 +23,8 @@ function fixTimes() {
 
 new MutationObserver(fixTimes).observe(document.documentElement, {
   childList: true,
+  characterData: true,
   subtree: true,
 });
+setInterval(fixTimes, 1000);
 fixTimes();
