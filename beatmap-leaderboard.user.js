@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Leaderboard Minutes
-// @version      1.0.0
+// @version      1.0.1
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-leaderboard.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-leaderboard.user.js
@@ -12,7 +12,10 @@ function fixTimes() {
   document.querySelectorAll(".beatmap-scoreboard-table time").forEach((el) => {
     const node = el.firstChild;
     if (!node || node.nodeType !== Node.TEXT_NODE || node.nodeValue.trim() !== "now") return;
-    const age = Date.now() - new Date(el.getAttribute("title")).getTime();
+    const stamp = el.getAttribute("title") || el.getAttribute("data-orig-title") || el.getAttribute("oldtitle") || el.getAttribute("data-title") || el.dataset.osuMaidTime;
+    if (!stamp) return;
+    el.dataset.osuMaidTime = stamp;
+    const age = Date.now() - new Date(stamp).getTime();
     const minutes = Math.floor(age / 60000);
     if (minutes >= 1 && minutes < 60) node.nodeValue = `${minutes}m`;
   });
