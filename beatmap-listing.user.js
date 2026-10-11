@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.7.1
+// @version      1.8.0
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -305,32 +305,51 @@ modeStyle.textContent = `
 `;
 document.documentElement.appendChild(modeStyle);
 
+const BG_ON = "osu-maid:bg-button";
+
+function makeToggle(text, on, onChange) {
+  const label = document.createElement("label");
+  label.className = "osu-maid-mode";
+  label.innerHTML = `<span class="osu-maid-mode__track"></span><span>${text}</span>`;
+  label.toggleAttribute("data-on", on);
+  label.addEventListener("click", (e) => {
+    e.preventDefault();
+    const next = !label.hasAttribute("data-on");
+    label.toggleAttribute("data-on", next);
+    onChange(next);
+  });
+  return label;
+}
+
 function mountModeToggle() {
   if (!/^\/beatmapsets(\/\d+)?\/?$/.test(location.pathname)) return;
+  mountBgButton();
   const host = document.querySelector('[class*="header-v4--beatmapset"] .header-v4__row--title');
   if (!host || host.querySelector(".osu-maid-gear")) return;
 
   const gear = document.createElement("div");
   gear.className = "osu-maid-gear";
   gear.innerHTML =
-    '<button type="button" class="osu-maid-gear__button" title="listing settings"><i class="fas fa-cog"></i></button>' +
+    '<button type="button" class="osu-maid-gear__button" title="settings"><i class="fas fa-cog"></i></button>' +
     '<div class="osu-maid-gear__menu"></div>';
   const menu = gear.querySelector(".osu-maid-gear__menu");
 
-  const isListing = location.pathname.replace(/\/$/, "") === "/beatmapsets";
-  const label = document.createElement("label");
-  label.className = "osu-maid-mode";
-  label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember selected mode</span>';
-  label.toggleAttribute("data-on", rememberOn());
-  label.addEventListener("click", (e) => {
-    e.preventDefault();
-    const on = !rememberOn();
-    saveKey(MODE_ON, on ? "1" : null);
-    label.toggleAttribute("data-on", on);
-    if (on) saveMode();
-    else saveKey(MODE_VAL, null);
-  });
-  if (isListing) menu.appendChild(label);
+  if (location.pathname.replace(/\/$/, "") === "/beatmapsets") {
+    menu.appendChild(
+      makeToggle("remember selected mode", rememberOn(), (on) => {
+        saveKey(MODE_ON, on ? "1" : null);
+        if (on) saveMode();
+        else saveKey(MODE_VAL, null);
+      }),
+    );
+  } else {
+    menu.appendChild(
+      makeToggle("show background button", loadKey(BG_ON) === "1", (on) => {
+        saveKey(BG_ON, on ? "1" : null);
+        mountBgButton();
+      }),
+    );
+  }
 
   gear.querySelector(".osu-maid-gear__button").addEventListener("click", () => {
     gear.toggleAttribute("data-open");
@@ -339,6 +358,31 @@ function mountModeToggle() {
     if (!gear.contains(e.target)) gear.removeAttribute("data-open");
   });
   host.appendChild(gear);
+}
+
+function mountBgButton() {
+  const buttons = document.querySelector(".beatmapset-header__buttons");
+  const existing = document.querySelector(".osu-maid-bg");
+  const setId = location.pathname.match(/^\/beatmapsets\/(\d+)/)?.[1];
+  if (!buttons || !setId || loadKey(BG_ON) !== "1") {
+    existing?.remove();
+    return;
+  }
+  const href = `https://assets.ppy.sh/beatmaps/${setId}/covers/fullsize.jpg`;
+  if (existing) {
+    if (existing.parentElement === buttons && existing.href === href) return;
+    existing.remove();
+  }
+  const link = document.createElement("a");
+  link.className = "btn-osu-big btn-osu-big--beatmapset-header-square osu-maid-bg";
+  link.href = href;
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.title = "view background";
+  link.innerHTML =
+    '<span class="btn-osu-big__content">' +
+    '<span class="btn-osu-big__icon"><span class="fa fa-fw"><span class="fas fa-image"></span></span></span></span>';
+  buttons.appendChild(link);
 }
 
 new MutationObserver(mountModeToggle).observe(document.documentElement, {
