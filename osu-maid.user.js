@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.2
+// @version      1.0.3
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -466,19 +466,15 @@ document.addEventListener(
 
 const modeStyle = document.createElement("style");
 modeStyle.textContent = `
-.beatmapsets-search { position: relative; }
 .osu-maid-mode {
-  position: absolute;
-  right: 20px;
-  bottom: 12px;
-  display: flex;
+  display: inline-flex;
+  margin-left: 24px;
   align-items: center;
   gap: 8px;
   font-size: 12px;
   color: #fff;
   cursor: pointer;
   user-select: none;
-  z-index: 2;
 }
 .osu-maid-mode__track {
   width: 30px;
@@ -508,9 +504,16 @@ modeStyle.textContent = `
 `;
 document.documentElement.appendChild(modeStyle);
 
+function findModeRow() {
+  const head = [...document.querySelectorAll(".beatmapsets-search *")].find(
+    (el) => el.children.length === 0 && el.textContent.trim() === "Mode",
+  );
+  return head?.parentElement;
+}
+
 function mountModeToggle() {
-  const host = document.querySelector(".beatmapsets-search");
-  if (!host || host.querySelector(".osu-maid-mode")) return;
+  const row = findModeRow();
+  if (!row || row.querySelector(".osu-maid-mode")) return;
   const label = document.createElement("label");
   label.className = "osu-maid-mode";
   label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember mode</span>';
@@ -523,7 +526,7 @@ function mountModeToggle() {
     if (on) saveMode();
     else store(MODE_VAL, null);
   });
-  host.appendChild(label);
+  row.appendChild(label);
 }
 
 new MutationObserver(mountModeToggle).observe(document.documentElement, {
