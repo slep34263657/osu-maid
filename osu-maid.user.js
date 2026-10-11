@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.5
+// @version      1.0.6
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -476,6 +476,7 @@ modeStyle.textContent = `
   user-select: none;
 }
 .osu-maid-mode__track {
+  flex: none;
   width: 30px;
   height: 16px;
   border-radius: 8px;
@@ -515,12 +516,12 @@ function mountModeToggle() {
   const anchor = filterRow("played") || filterRow("mode");
   if (!anchor) return;
   const row = document.createElement("div");
-  row.className = "beatmapsets-search-filter";
+  row.className = anchor.className;
   const head = document.createElement("span");
-  head.className = "beatmapsets-search-filter__header";
+  head.className = anchor.querySelector(".beatmapsets-search-filter__header").className;
   head.textContent = "Remember";
   const items = document.createElement("div");
-  items.className = "beatmapsets-search-filter__items";
+  items.className = anchor.querySelector(".beatmapsets-search-filter__items").className;
   const label = document.createElement("label");
   label.className = "osu-maid-mode";
   label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember selected mode</span>';
