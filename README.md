@@ -7,6 +7,7 @@
 - **[beatmap-listing](https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js)**: shows BPM and status outlines on beatmap cards.
 - **[osu-results](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-results.user.js)**: lays out the score page like a results screen.
 - **[osu-score-image](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-score-image.user.js)**: saves a score as an image.
+- **[osu-maid](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js)**: all of the above in one script. install this instead of the others, not with them.
 
 ## install
 
