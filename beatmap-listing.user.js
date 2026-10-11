@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.9.0
+// @version      1.9.1
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -265,7 +265,9 @@ modeStyle.textContent = `
   border: 1px solid rgba(255, 255, 255, .1);
 }
 .osu-maid-gear[data-open] .osu-maid-gear__menu:not(:empty) {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 [data-osu-maid-compact] .osu-maid-dl-video {
   display: none;
