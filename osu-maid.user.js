@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.18
+// @version      1.0.19
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -39,6 +39,18 @@ html body { ${vars("b", palette.b)} ${vars("d", palette.d)} }
 ${NOT_USER_PAGE} .header-v4__bg { filter: grayscale(1) brightness(${palette.header}); }
 ${NOT_USER_PAGE} .nav2-header__triangles { filter: grayscale(1) brightness(${palette.triangles}); }
 ${NOT_USER_PAGE} .nav2-header__transition-overlay { background-color: hsl(var(--hsl-b5)); }
+.beatmapset-header__buttons .btn-osu-big {
+  --bg: rgba(0, 0, 0, .5);
+  --hover-bg: rgba(0, 0, 0, .7);
+  --colour: #fff;
+  --hover-colour: #fff;
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.beatmapset-header__buttons .btn-osu-big--beatmapset-header-square-unfavourite {
+  --colour: hsl(var(--hsl-pink-1));
+  --hover-colour: hsl(var(--hsl-pink-1));
+}
 `;
 }
 
