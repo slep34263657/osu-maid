@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Wide Profile Layout
-// @version      1.2.2
+// @version      1.2.3
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-layout.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-layout.user.js
@@ -14,6 +14,10 @@ style.textContent = `
   body:has(.profile-info) .osu-page--generic-compact,
   .header-v4--users .header-v4__content {
     max-width: min(1500px, 94vw);
+  }
+  body:has(.profile-info) .profile-info__bg {
+    height: auto;
+    aspect-ratio: 15 / 4;
   }
   body:has(.profile-info) .user-profile-pages {
     grid-template-columns: repeat(2, minmax(0, 1fr));
