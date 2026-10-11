@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.0
+// @version      1.0.1
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -125,8 +125,8 @@ style.textContent = `
   border-radius: var(--border-radius);
   pointer-events: none;
   background-image:
-    linear-gradient(90deg, transparent 0%, transparent 30%, var(--bg-main) 70%),
-    linear-gradient(rgba(20, 14, 18, .4), rgba(20, 14, 18, .4)),
+    linear-gradient(90deg, transparent 0%, transparent 30%, color-mix(in srgb, var(--bg-main) 55%, black) 70%),
+    linear-gradient(90deg, rgba(0, 0, 0, .75), rgba(0, 0, 0, .5)),
     var(--cover),
     linear-gradient(var(--bg-main), var(--bg-main));
   background-size: 100% 100%, 70% 100%, 70% auto, 100% 100%;
