@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.3
+// @version      1.0.4
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -407,14 +407,14 @@ new MutationObserver(schedule).observe(document.documentElement, {
 const MODE_ON = "osu-maid:remember-mode";
 const MODE_VAL = "osu-maid:mode";
 
-function store(key, value) {
+function saveKey(key, value) {
   try {
     if (value === null) localStorage.removeItem(key);
     else localStorage.setItem(key, value);
   } catch {}
 }
 
-function load(key) {
+function loadKey(key) {
   try {
     return localStorage.getItem(key);
   } catch {
@@ -423,11 +423,11 @@ function load(key) {
 }
 
 function rememberOn() {
-  return load(MODE_ON) === "1";
+  return loadKey(MODE_ON) === "1";
 }
 
 function withSavedMode(url) {
-  const mode = load(MODE_VAL);
+  const mode = loadKey(MODE_VAL);
   if (!rememberOn() || !mode) return null;
   if (url.pathname.replace(/\/$/, "") !== "/beatmapsets" || url.searchParams.has("m")) return null;
   url.searchParams.set("m", mode);
@@ -440,7 +440,7 @@ if (startUrl) location.replace(startUrl.href);
 function saveMode() {
   if (!rememberOn() || location.pathname.replace(/\/$/, "") !== "/beatmapsets") return;
   const m = new URLSearchParams(location.search).get("m");
-  store(MODE_VAL, m === null ? "" : m);
+  saveKey(MODE_VAL, m === null ? "" : m);
 }
 
 for (const name of ["pushState", "replaceState"]) {
@@ -505,10 +505,10 @@ modeStyle.textContent = `
 document.documentElement.appendChild(modeStyle);
 
 function findModeRow() {
-  const head = [...document.querySelectorAll(".beatmapsets-search *")].find(
-    (el) => el.children.length === 0 && el.textContent.trim() === "Mode",
+  const head = [...document.querySelectorAll(".beatmapsets-search-filter__header")].find(
+    (el) => el.textContent.trim().toLowerCase() === "mode",
   );
-  return head?.parentElement;
+  return head?.closest(".beatmapsets-search-filter") || head?.parentElement;
 }
 
 function mountModeToggle() {
@@ -521,10 +521,10 @@ function mountModeToggle() {
   label.addEventListener("click", (e) => {
     e.preventDefault();
     const on = !rememberOn();
-    store(MODE_ON, on ? "1" : null);
+    saveKey(MODE_ON, on ? "1" : null);
     label.toggleAttribute("data-on", on);
     if (on) saveMode();
-    else store(MODE_VAL, null);
+    else saveKey(MODE_VAL, null);
   });
   row.appendChild(label);
 }
