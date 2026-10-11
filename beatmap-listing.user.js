@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.6.5
+// @version      1.7.0
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -232,8 +232,42 @@ document.addEventListener(
 
 const modeStyle = document.createElement("style");
 modeStyle.textContent = `
+.header-v4--beatmapsets .header-v4__content { position: relative; }
+.osu-maid-gear {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+.osu-maid-gear__button {
+  background: none;
+  border: 0;
+  padding: 8px;
+  font-size: 18px;
+  color: #fff;
+  opacity: .6;
+  cursor: pointer;
+}
+.osu-maid-gear__button:hover,
+.osu-maid-gear[data-open] .osu-maid-gear__button {
+  opacity: 1;
+}
+.osu-maid-gear__menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  padding: 12px 14px;
+  white-space: nowrap;
+  border-radius: 8px;
+  background: rgba(10, 10, 10, .95);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+.osu-maid-gear[data-open] .osu-maid-gear__menu {
+  display: block;
+}
 .osu-maid-mode {
-  margin-left: 16px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -271,17 +305,17 @@ modeStyle.textContent = `
 `;
 document.documentElement.appendChild(modeStyle);
 
-function filterRow(title) {
-  const head = [...document.querySelectorAll(".beatmapsets-search-filter__header")].find(
-    (el) => el.textContent.trim().toLowerCase() === title,
-  );
-  return head?.closest(".beatmapsets-search-filter");
-}
-
 function mountModeToggle() {
-  if (document.querySelector(".osu-maid-mode")) return;
-  const anchor = filterRow("played") || filterRow("mode");
-  if (!anchor) return;
+  const host = document.querySelector(".header-v4--beatmapsets .header-v4__content");
+  if (!host || host.querySelector(".osu-maid-gear")) return;
+
+  const gear = document.createElement("div");
+  gear.className = "osu-maid-gear";
+  gear.innerHTML =
+    '<button type="button" class="osu-maid-gear__button" title="listing settings"><i class="fas fa-cog"></i></button>' +
+    '<div class="osu-maid-gear__menu"></div>';
+  const menu = gear.querySelector(".osu-maid-gear__menu");
+
   const label = document.createElement("label");
   label.className = "osu-maid-mode";
   label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember selected mode</span>';
@@ -294,7 +328,15 @@ function mountModeToggle() {
     if (on) saveMode();
     else saveKey(MODE_VAL, null);
   });
-  anchor.querySelector(".beatmapsets-search-filter__items").appendChild(label);
+  menu.appendChild(label);
+
+  gear.querySelector(".osu-maid-gear__button").addEventListener("click", () => {
+    gear.toggleAttribute("data-open");
+  });
+  document.addEventListener("click", (e) => {
+    if (!gear.contains(e.target)) gear.removeAttribute("data-open");
+  });
+  host.appendChild(gear);
 }
 
 new MutationObserver(mountModeToggle).observe(document.documentElement, {
