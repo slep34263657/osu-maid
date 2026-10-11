@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.8.0
+// @version      1.9.0
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -267,6 +267,15 @@ modeStyle.textContent = `
 .osu-maid-gear[data-open] .osu-maid-gear__menu:not(:empty) {
   display: block;
 }
+[data-osu-maid-compact] .osu-maid-dl-video {
+  display: none;
+}
+[data-osu-maid-compact] .osu-maid-dl {
+  min-width: 0;
+}
+[data-osu-maid-compact] .osu-maid-dl .btn-osu-big__left {
+  display: none;
+}
 .osu-maid-mode {
   display: inline-flex;
   align-items: center;
@@ -306,6 +315,7 @@ modeStyle.textContent = `
 document.documentElement.appendChild(modeStyle);
 
 const BG_ON = "osu-maid:bg-button";
+const COMPACT_ON = "osu-maid:compact-downloads";
 
 function makeToggle(text, on, onChange) {
   const label = document.createElement("label");
@@ -324,6 +334,7 @@ function makeToggle(text, on, onChange) {
 function mountModeToggle() {
   if (!/^\/beatmapsets(\/\d+)?\/?$/.test(location.pathname)) return;
   mountBgButton();
+  tagDownloads();
   const host = document.querySelector('[class*="header-v4--beatmapset"] .header-v4__row--title');
   if (!host || host.querySelector(".osu-maid-gear")) return;
 
@@ -349,6 +360,12 @@ function mountModeToggle() {
         mountBgButton();
       }),
     );
+    menu.appendChild(
+      makeToggle("compact download buttons", loadKey(COMPACT_ON) === "1", (on) => {
+        saveKey(COMPACT_ON, on ? "1" : null);
+        tagDownloads();
+      }),
+    );
   }
 
   gear.querySelector(".osu-maid-gear__button").addEventListener("click", () => {
@@ -358,6 +375,19 @@ function mountModeToggle() {
     if (!gear.contains(e.target)) gear.removeAttribute("data-open");
   });
   host.appendChild(gear);
+}
+
+function tagDownloads() {
+  document.documentElement.toggleAttribute("data-osu-maid-compact", loadKey(COMPACT_ON) === "1");
+  const links = [...document.querySelectorAll(".beatmapset-header__buttons a.btn-osu-big")].filter((a) =>
+    /\/beatmapsets\/\d+\/download/.test(a.getAttribute("href") || ""),
+  );
+  const hasNoVideo = links.some((a) => a.href.includes("noVideo=1"));
+  links.forEach((a) => {
+    const withVideo = hasNoVideo && !a.href.includes("noVideo=1");
+    a.classList.toggle("osu-maid-dl-video", withVideo);
+    a.classList.toggle("osu-maid-dl", !withVideo);
+  });
 }
 
 function mountBgButton() {
