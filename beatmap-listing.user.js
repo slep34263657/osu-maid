@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.6.4
+// @version      1.6.5
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -233,6 +233,7 @@ document.addEventListener(
 const modeStyle = document.createElement("style");
 modeStyle.textContent = `
 .osu-maid-mode {
+  margin-left: 16px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -281,18 +282,9 @@ function mountModeToggle() {
   if (document.querySelector(".osu-maid-mode")) return;
   const anchor = filterRow("played") || filterRow("mode");
   if (!anchor) return;
-  const row = document.createElement("div");
-  row.className = anchor.className;
-  const head = document.createElement("span");
-  head.className = anchor.querySelector(".beatmapsets-search-filter__header").className;
-  head.textContent = "Remember";
-  const items = document.createElement("div");
-  items.className = anchor.querySelector(".beatmapsets-search-filter__items").className;
   const label = document.createElement("label");
   label.className = "osu-maid-mode";
   label.innerHTML = '<span class="osu-maid-mode__track"></span><span>remember selected mode</span>';
-  items.appendChild(label);
-  row.append(head, items);
   label.toggleAttribute("data-on", rememberOn());
   label.addEventListener("click", (e) => {
     e.preventDefault();
@@ -302,7 +294,7 @@ function mountModeToggle() {
     if (on) saveMode();
     else saveKey(MODE_VAL, null);
   });
-  anchor.after(row);
+  anchor.querySelector(".beatmapsets-search-filter__items").appendChild(label);
 }
 
 new MutationObserver(mountModeToggle).observe(document.documentElement, {
