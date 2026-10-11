@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.8
+// @version      1.0.9
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -582,6 +582,28 @@ if (location.pathname === "/beatmapsets") seed();
 })();
 } catch (err) {
   console.error("[osu-maid] beatmap-listing failed", err);
+}
+
+try {
+(() => {
+function fixTimes() {
+  document.querySelectorAll(".beatmap-scoreboard-table time").forEach((el) => {
+    const node = el.firstChild;
+    if (!node || node.nodeType !== Node.TEXT_NODE || node.nodeValue.trim() !== "now") return;
+    const age = Date.now() - new Date(el.getAttribute("title")).getTime();
+    const minutes = Math.floor(age / 60000);
+    if (minutes >= 1 && minutes < 60) node.nodeValue = `${minutes}m`;
+  });
+}
+
+new MutationObserver(fixTimes).observe(document.documentElement, {
+  childList: true,
+  subtree: true,
+});
+fixTimes();
+})();
+} catch (err) {
+  console.error("[osu-maid] beatmap-leaderboard failed", err);
 }
 
 try {
