@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.24
+// @version      1.0.25
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -323,7 +323,7 @@ style.textContent = `
 .beatmapset-panel__stats-item--bpm {
   grid-area: bpm;
 }
-.beatmapset-panel[style*="--status-hsl"]::after {
+:root:not([data-osu-maid-hide-outlines]) .beatmapset-panel[style*="--status-hsl"]::after {
   content: "";
   position: absolute;
   top: 0;
@@ -585,6 +585,21 @@ function loadKey(key) {
   }
 }
 
+const OUTLINES_ON = "osu-maid:status-outlines";
+
+function outlinesOn() {
+  return loadKey(OUTLINES_ON) !== "0";
+}
+
+function applyOutlines() {
+  document.documentElement.toggleAttribute("data-osu-maid-hide-outlines", !outlinesOn());
+}
+
+applyOutlines();
+window.addEventListener("storage", (event) => {
+  if (event.key === null || event.key === OUTLINES_ON) applyOutlines();
+});
+
 function rememberOn() {
   return loadKey(MODE_ON) === "1";
 }
@@ -745,6 +760,12 @@ function mountModeToggle() {
   const menu = gear.querySelector(".osu-maid-gear__menu");
 
   if (location.pathname.replace(/\/$/, "") === "/beatmapsets") {
+    menu.appendChild(
+      makeToggle("show status outlines", outlinesOn(), (on) => {
+        saveKey(OUTLINES_ON, on ? "1" : "0");
+        applyOutlines();
+      }),
+    );
     menu.appendChild(
       makeToggle("remember selected mode", rememberOn(), (on) => {
         saveKey(MODE_ON, on ? "1" : null);
