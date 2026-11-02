@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.21
+// @version      1.0.22
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -275,6 +275,14 @@ style.textContent = `
 .beatmapset-panel.beatmapset-panel--size-extra {
   --stats-grid-template: "hype play-count date" "nominations favourite-count bpm" / auto auto auto;
 }
+.osu-maid-alternate-page-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
 .beatmapset-panel__info-row--alternate-title {
   font-size: 12px;
   font-weight: 600;
@@ -396,9 +404,36 @@ function decorateTitle(card, id, showOriginal) {
   if (alternate.title !== title) alternate.title = title;
 }
 
+function decoratePageTitle(showOriginal) {
+  const titleRow = document.querySelector(".beatmapset-header__details-text--title");
+  let alternate = document.querySelector(".osu-maid-alternate-page-title");
+  const id = Number(location.pathname.match(/^\/beatmapsets\/(\d+)\/?$/)?.[1]);
+  let metadata;
+  try {
+    metadata = JSON.parse(document.getElementById("json-beatmapset")?.textContent || "null");
+  } catch {}
+  const title = metadata?.title?.trim();
+  const original = metadata?.title_unicode?.trim();
+  if (!showOriginal || !titleRow || !id || metadata?.id !== id || !title || !original || title === original) {
+    alternate?.remove();
+    return;
+  }
+  if (alternate && alternate.previousElementSibling !== titleRow) {
+    alternate.remove();
+    alternate = null;
+  }
+  if (!alternate) {
+    alternate = document.createElement("span");
+    alternate.className = "beatmapset-header__details-text osu-maid-alternate-page-title";
+    titleRow.after(alternate);
+  }
+  if (alternate.textContent !== title) alternate.textContent = title;
+}
+
 function decorate() {
   let missing = false;
   const showOriginal = showOriginalTitles();
+  decoratePageTitle(showOriginal);
 
   document.querySelectorAll(".beatmapset-panel").forEach((card) => {
     const badge = card.querySelector(".beatmapset-status--panel");
