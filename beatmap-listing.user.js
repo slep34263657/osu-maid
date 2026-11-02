@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.9.1
+// @version      1.9.2
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -10,6 +10,7 @@
 
 const SEARCH_PATH = "/beatmapsets/search";
 const bpms = new Map();
+const titles = new Map();
 let seededFor = null;
 let queued = false;
 
@@ -23,6 +24,11 @@ style.textContent = `
 }
 .beatmapset-panel.beatmapset-panel--size-extra {
   --stats-grid-template: "hype play-count date" "nominations favourite-count bpm" / auto auto auto;
+}
+.beatmapset-panel__info-row--alternate-title {
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 .beatmapset-panel__stats-item--bpm {
   grid-area: bpm;
@@ -69,7 +75,10 @@ document.documentElement.appendChild(style);
 
 function collect(text) {
   try {
-    JSON.parse(text).beatmapsets.forEach((set) => bpms.set(set.id, set.bpm));
+    JSON.parse(text).beatmapsets.forEach((set) => {
+      bpms.set(set.id, set.bpm);
+      titles.set(set.id, { title: set.title, original: set.title_unicode });
+    });
   } catch {
     return;
   }
@@ -110,8 +119,36 @@ function buildItem() {
   return item;
 }
 
+function showOriginalTitles() {
+  try {
+    return JSON.parse(localStorage.getItem("userPreferences"))?.beatmapset_title_show_original === true;
+  } catch {
+    return false;
+  }
+}
+
+function decorateTitle(card, id, showOriginal) {
+  const metadata = titles.get(id);
+  const titleRow = card.querySelector(".beatmapset-panel__info-row--title");
+  let alternate = card.querySelector(".beatmapset-panel__info-row--alternate-title");
+  const title = metadata?.title?.trim();
+  const original = metadata?.original?.trim();
+  if (!showOriginal || !titleRow || !title || !original || title === original) {
+    alternate?.remove();
+    return;
+  }
+  if (!alternate) {
+    alternate = document.createElement("div");
+    alternate.className = "beatmapset-panel__info-row beatmapset-panel__info-row--alternate-title u-ellipsis-overflow";
+    titleRow.after(alternate);
+  }
+  if (alternate.textContent !== title) alternate.textContent = title;
+  if (alternate.title !== title) alternate.title = title;
+}
+
 function decorate() {
   let missing = false;
+  const showOriginal = showOriginalTitles();
 
   document.querySelectorAll(".beatmapset-panel").forEach((card) => {
     const badge = card.querySelector(".beatmapset-status--panel");
@@ -124,6 +161,8 @@ function decorate() {
     const href = card.querySelector(".beatmapset-panel__main-link")?.href || "";
     const id = Number(href.match(/beatmapsets\/(\d+)/)?.[1]);
     if (!row || !id) return;
+
+    decorateTitle(card, id, showOriginal);
 
     const bpm = bpms.get(id);
     if (bpm == null) {
@@ -164,6 +203,11 @@ function schedule() {
     decorate();
   });
 }
+
+window.addEventListener("storage", (event) => {
+  if (event.key === null || event.key === "userPreferences") schedule();
+});
+document.addEventListener("change", () => queueMicrotask(schedule));
 
 new MutationObserver(schedule).observe(document.documentElement, {
   childList: true,
