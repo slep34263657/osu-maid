@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Beatmap Listing BPM
-// @version      1.9.3
+// @version      1.9.4
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js
@@ -24,6 +24,28 @@ style.textContent = `
 }
 .beatmapset-panel.beatmapset-panel--size-extra {
   --stats-grid-template: "hype play-count date" "nominations favourite-count bpm" / auto auto auto;
+}
+.beatmapset-header[data-osu-maid-background] {
+  --osu-maid-art-opacity: .55;
+}
+.beatmapset-header[data-osu-maid-background]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(100% + var(--osu-maid-info-height, 0px));
+  background-image: var(--osu-maid-background);
+  background-size: cover;
+  background-position: center;
+  opacity: var(--osu-maid-art-opacity);
+  pointer-events: none;
+}
+.beatmapset-header[data-osu-maid-background] > .beatmapset-header__cover {
+  display: none;
+}
+.beatmapset-header[data-osu-maid-background] + .beatmapset-info {
+  position: relative;
+  --osu-maid-info-opacity: .78;
+  background-color: hsla(var(--hsl-b4), var(--osu-maid-info-opacity));
 }
 .osu-maid-alternate-page-title {
   display: block;
@@ -154,6 +176,41 @@ function decorateTitle(card, id, showOriginal) {
   if (alternate.title !== title) alternate.title = title;
 }
 
+let backgroundHeader = null;
+let backgroundInfo = null;
+const backgroundObserver = new ResizeObserver(() => sizePageBackground());
+
+function sizePageBackground() {
+  if (!backgroundHeader || !backgroundInfo) return;
+  const height = `${backgroundInfo.getBoundingClientRect().height}px`;
+  if (backgroundHeader.style.getPropertyValue("--osu-maid-info-height") !== height) {
+    backgroundHeader.style.setProperty("--osu-maid-info-height", height);
+  }
+}
+
+function decoratePageBackground() {
+  const id = location.pathname.match(/^\/beatmapsets\/(\d+)\/?$/)?.[1];
+  const header = id && document.querySelector(".beatmapset-header");
+  const info = header?.nextElementSibling;
+  if (!header || !info?.classList.contains("beatmapset-info")) {
+    backgroundObserver.disconnect();
+    backgroundHeader?.removeAttribute("data-osu-maid-background");
+    backgroundHeader = backgroundInfo = null;
+    return;
+  }
+  if (header !== backgroundHeader || info !== backgroundInfo) {
+    backgroundObserver.disconnect();
+    backgroundHeader = header;
+    backgroundInfo = info;
+    backgroundObserver.observe(info);
+  }
+  if (header.dataset.osuMaidBackground !== id) {
+    header.style.setProperty("--osu-maid-background", `url("https://assets.ppy.sh/beatmaps/${id}/covers/fullsize.jpg")`);
+    header.dataset.osuMaidBackground = id;
+  }
+  sizePageBackground();
+}
+
 function decoratePageTitle(showOriginal) {
   const titleRow = document.querySelector(".beatmapset-header__details-text--title");
   let alternate = document.querySelector(".osu-maid-alternate-page-title");
@@ -184,6 +241,7 @@ function decorate() {
   let missing = false;
   const showOriginal = showOriginalTitles();
   decoratePageTitle(showOriginal);
+  decoratePageBackground();
 
   document.querySelectorAll(".beatmapset-panel").forEach((card) => {
     const badge = card.querySelector(".beatmapset-status--panel");
