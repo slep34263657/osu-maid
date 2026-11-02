@@ -1,6 +1,6 @@
 # osu-maid
 
-> very wip probably has alot of bugs
+> wip 
 
 - **[osu-dark](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-dark.user.js)**: dark grey or pitch black theme for the osu! site.
 - **[osu-layout](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-layout.user.js)**: makes profile pages wider and two columns, with map covers behind score rows.
