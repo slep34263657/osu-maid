@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Wide Profile Layout
-// @version      1.2.3
+// @version      1.3.0
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-layout.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-layout.user.js
@@ -153,6 +153,64 @@ function applyScores() {
   });
 }
 
+const MODES = { osu: 0, taiko: 1, fruits: 2, mania: 3 };
+let scoreRankKey = null;
+
+function applyScoreRank() {
+  const panel = document.querySelector(".profile-detail-stats__values");
+  if (!panel) scoreRankKey = null;
+  const active = document.querySelector(".game-mode-link--active");
+  const userId = location.pathname.match(/\/users\/([^/]+)/)?.[1];
+  if (!panel || !active || !userId || !document.querySelector(".profile-info")) return;
+
+  const mode = active.getAttribute("data-mode");
+  if (!(mode in MODES)) return;
+
+  const key = `${userId}:${mode}`;
+  const existing = panel.querySelector(".custom-score-rank");
+  if (existing?.dataset.key === key || scoreRankKey === key) return;
+  existing?.remove();
+  scoreRankKey = key;
+
+  fetch(`https://score.respektive.pw/u/${userId}?m=${MODES[mode]}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const player = Array.isArray(data) && data[0];
+      const target = document.querySelector(".profile-detail-stats__values");
+      if (!player || !target || target.querySelector(".custom-score-rank")) return;
+
+      const box = document.createElement("div");
+      box.className = "value-display value-display--rank custom-score-rank";
+      box.dataset.key = key;
+
+      const label = document.createElement("div");
+      label.className = "value-display__label";
+      label.textContent = "Score Ranking";
+
+      const value = document.createElement("div");
+      value.className = "value-display__value";
+      if (player.rank) {
+        value.textContent = `#${player.rank.toLocaleString("en-US")}`;
+        if (player.rank_highest) {
+          const date = new Date(player.rank_highest.updated_at).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          });
+          value.title = `Highest rank: #${player.rank_highest.rank.toLocaleString("en-US")} on ${date}`;
+        }
+      } else {
+        value.textContent = "N/A";
+      }
+
+      box.append(label, value);
+      target.appendChild(box);
+    })
+    .catch(() => {
+      scoreRankKey = null;
+    });
+}
+
 let queued = false;
 
 function fillLonelyRows() {
@@ -181,6 +239,7 @@ function schedule() {
 
 new MutationObserver(() => {
   applyScores();
+  applyScoreRank();
   schedule();
 }).observe(document.documentElement, {
   childList: true,
