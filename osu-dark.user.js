@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         osu! Dark Theme
-// @version      1.3.0
+// @version      1.3.1
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-dark.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-dark.user.js
@@ -46,6 +46,7 @@ ${NOT_USER_PAGE} .nav2-header__transition-overlay { background-color: hsl(var(--
 }
 html:has(.tocify-wrapper), html:has(.tocify-wrapper) body { background: hsl(var(--hsl-b5)); }
 .page-wrapper { background: hsl(var(--hsl-b5)); color: #d8d8d8; }
+.page-wrapper .content, .page-wrapper .content * { text-shadow: none; }
 .page-wrapper .content, .page-wrapper .content :is(p, li, td, th, h1, h2, h3, h4, h5, strong, em, b, span, label, summary, small) { color: #d8d8d8; }
 .page-wrapper .content h1 { background-image: none; background-color: hsl(var(--hsl-b4)); border-color: hsl(var(--hsl-b3)); }
 .page-wrapper .content h2 { background-image: none; border-color: hsl(var(--hsl-b3)); }
