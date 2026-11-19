@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.26
+// @version      1.0.27
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -51,6 +51,26 @@ ${NOT_USER_PAGE} .nav2-header__transition-overlay { background-color: hsl(var(--
   --colour: hsl(var(--hsl-pink-1));
   --hover-colour: hsl(var(--hsl-pink-1));
 }
+html:has(.tocify-wrapper), html:has(.tocify-wrapper) body { background: hsl(var(--hsl-b5)); }
+.page-wrapper { background: hsl(var(--hsl-b5)); color: #d8d8d8; }
+.page-wrapper .content, .page-wrapper .content :is(p, li, td, th, h1, h2, h3, h4, h5, strong, em, b, span, label, summary, small) { color: #d8d8d8; }
+.page-wrapper .content h1 { background-image: none; background-color: hsl(var(--hsl-b4)); border-color: hsl(var(--hsl-b3)); }
+.page-wrapper .content h2 { background-image: none; border-color: hsl(var(--hsl-b3)); }
+.page-wrapper .content h3 { border-color: hsl(var(--hsl-b3)); }
+.page-wrapper .content a { color: #7cc4ff; }
+.page-wrapper .content a.badge, .page-wrapper .content a.badge * { color: #fff; }
+.page-wrapper .content code { background-color: rgba(255, 255, 255, .08); }
+.page-wrapper .content table, .page-wrapper .content th, .page-wrapper .content td { border-color: hsl(var(--hsl-b3)); }
+.page-wrapper .content td { background-color: rgba(255, 255, 255, .03); }
+.page-wrapper .content tr:nth-child(even) td { background-color: rgba(255, 255, 255, .06); }
+.page-wrapper .content h4.fancy-heading-panel { background-color: hsl(var(--hsl-b3)); color: #fff; }
+.page-wrapper .content input { background-color: hsl(var(--hsl-b3)); color: #fff; border-color: hsl(var(--hsl-b2)); }
+.page-wrapper .content hr { border-color: hsl(var(--hsl-b3)); }
+.tocify-wrapper { background-color: hsl(var(--hsl-b6)); }
+.tocify-wrapper input.search { background-color: hsl(var(--hsl-b4)); }
+.tocify-wrapper ul.tocify-subheader { background-color: hsl(var(--hsl-b5)); }
+.page-wrapper .dark-box { background-color: hsl(var(--hsl-b4)); }
+.page-wrapper pre, .page-wrapper blockquote, .page-wrapper aside.notice { background-color: hsl(var(--hsl-b6)); }
 `;
 }
 
