@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.30
+// @version      1.0.31
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -315,6 +315,18 @@ function mountProfileGear() {
     document.documentElement.toggleAttribute("data-osu-maid-hide-locked", on);
   });
   header.appendChild(toggle);
+  placeSwitch(toggle, header);
+  requestAnimationFrame(() => placeSwitch(toggle, header));
+}
+
+function placeSwitch(toggle, header) {
+  const handle = header.querySelector(".sortable-handle");
+  if (!handle) return;
+  const box = header.getBoundingClientRect();
+  const rect = handle.getBoundingClientRect();
+  if (!rect.width) return;
+  toggle.style.top = `${rect.top - box.top + rect.height / 2}px`;
+  toggle.style.right = `${box.right - rect.left + 14}px`;
 }
 
 const MODES = { osu: 0, taiko: 1, fruits: 2, mania: 3 };
@@ -410,7 +422,10 @@ new MutationObserver(() => {
   childList: true,
   subtree: true,
 });
-window.addEventListener("resize", schedule);
+window.addEventListener("resize", () => {
+  document.querySelectorAll(".osu-maid-switch").forEach((el) => placeSwitch(el, el.parentElement));
+  schedule();
+});
 applyScores();
 })();
 } catch (err) {
