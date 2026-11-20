@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osu-maid
 // @description  all osu-maid scripts in one
-// @version      1.0.29
+// @version      1.0.30
 // @match        https://osu.ppy.sh/*
 // @updateURL    https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
 // @downloadURL  https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js
@@ -207,75 +207,40 @@ html[data-osu-maid-hide-locked] .medals-group__medals:not(:has(.badge-achievemen
 html[data-osu-maid-hide-locked] .medals-group__group:not(:has(.badge-achievement:not(.badge-achievement--locked))) {
   display: none;
 }
-.osu-maid-gear {
-  position: relative;
-  align-self: center;
-  margin-left: 12px;
-  z-index: 5;
-}
-.osu-maid-gear__button {
-  background: none;
-  border: 0;
-  padding: 8px;
-  font-size: 18px;
-  color: #fff;
-  opacity: .6;
-  cursor: pointer;
-}
-.osu-maid-gear__button:hover,
-.osu-maid-gear[data-open] .osu-maid-gear__button {
-  opacity: 1;
-}
-.osu-maid-gear__menu {
-  display: none;
+.osu-maid-switch {
   position: absolute;
-  top: 100%;
-  right: 0;
-  padding: 12px 14px;
-  white-space: nowrap;
-  flex-direction: column;
-  gap: 10px;
-  border-radius: 8px;
-  background: rgba(10, 10, 10, .95);
-  border: 1px solid rgba(255, 255, 255, .1);
-}
-.osu-maid-gear[data-open] .osu-maid-gear__menu {
-  display: flex;
-}
-.osu-maid-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #fff;
+  top: 50%;
+  right: 56px;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .16);
   cursor: pointer;
-  user-select: none;
-}
-.osu-maid-mode__track {
-  flex: none;
-  width: 30px;
-  height: 16px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, .2);
-  position: relative;
   transition: background .15s;
 }
-.osu-maid-mode__track::after {
+.osu-maid-switch::after {
   content: "";
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 12px;
-  height: 12px;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
   transition: transform .15s;
 }
-.osu-maid-mode[data-on] .osu-maid-mode__track {
-  background: hsl(var(--hsl-pink-1, 333 100% 55%));
+.osu-maid-switch:hover {
+  background: rgba(255, 255, 255, .26);
 }
-.osu-maid-mode[data-on] .osu-maid-mode__track::after {
-  transform: translateX(14px);
+.osu-maid-switch[aria-checked="true"] {
+  background: hsl(var(--hsl-pink-1, 333 100% 70%));
+}
+.osu-maid-switch[aria-checked="true"]::after {
+  transform: translateX(18px);
 }
 .play-detail__rank-num {
   opacity: .6;
@@ -332,36 +297,24 @@ function saveFlag(key, on) {
 }
 
 function mountProfileGear() {
-  document.documentElement.toggleAttribute("data-osu-maid-hide-locked", loadFlag(HIDE_LOCKED));
-  const host = document.querySelector(".header-v4--users .header-v4__row--bar");
-  if (!host || host.querySelector(".osu-maid-gear") || !document.querySelector(".profile-info")) return;
+  const hidden = loadFlag(HIDE_LOCKED);
+  document.documentElement.toggleAttribute("data-osu-maid-hide-locked", hidden);
+  const header = document.querySelector('[data-page-id="medals"] .page-extra > .u-relative');
+  if (!header || header.querySelector(".osu-maid-switch")) return;
 
-  const gear = document.createElement("div");
-  gear.className = "osu-maid-gear";
-  gear.innerHTML =
-    '<button type="button" class="osu-maid-gear__button" title="settings"><i class="fas fa-cog"></i></button>' +
-    '<div class="osu-maid-gear__menu"></div>';
-
-  const label = document.createElement("label");
-  label.className = "osu-maid-mode";
-  label.innerHTML = '<span class="osu-maid-mode__track"></span><span>hide unachieved medals</span>';
-  label.toggleAttribute("data-on", loadFlag(HIDE_LOCKED));
-  label.addEventListener("click", (e) => {
-    e.preventDefault();
-    const on = !label.hasAttribute("data-on");
-    label.toggleAttribute("data-on", on);
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "osu-maid-switch";
+  toggle.title = "Hide unachieved medals";
+  toggle.setAttribute("role", "switch");
+  toggle.setAttribute("aria-checked", String(hidden));
+  toggle.addEventListener("click", () => {
+    const on = toggle.getAttribute("aria-checked") !== "true";
+    toggle.setAttribute("aria-checked", String(on));
     saveFlag(HIDE_LOCKED, on);
     document.documentElement.toggleAttribute("data-osu-maid-hide-locked", on);
   });
-  gear.querySelector(".osu-maid-gear__menu").appendChild(label);
-
-  gear.querySelector(".osu-maid-gear__button").addEventListener("click", () => {
-    gear.toggleAttribute("data-open");
-  });
-  document.addEventListener("click", (e) => {
-    if (!gear.contains(e.target)) gear.removeAttribute("data-open");
-  });
-  host.appendChild(gear);
+  header.appendChild(toggle);
 }
 
 const MODES = { osu: 0, taiko: 1, fruits: 2, mania: 3 };
