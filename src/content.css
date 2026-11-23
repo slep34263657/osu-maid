@@ -679,3 +679,11 @@ html.omp-modplain .mod__icon[data-acronym]::after { content: ""; background: var
 .omp-seg button { padding: .3em .7em; background: none; border: 0; border-radius: 5px; color: var(--dim); font: inherit; font-size: .9em; cursor: pointer; }
 .omp-seg button:hover { color: var(--text); }
 .omp-seg button[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 600; }
+
+/* rate chip without the hexagon: a small rounded pill in the mod's colour */
+html:is(.omp-modtext, .omp-modplain) .mod__extender {
+  -webkit-mask-image: none; mask-image: none; margin-left: .22em; padding: 0 .55em; height: 78%; align-self: center;
+  background-color: color-mix(in srgb, var(--type-bg-colour) 20%, transparent); border-radius: .45em;
+}
+html:is(.omp-modtext, .omp-modplain) .mod__extender span { font-size: .52em; }
+html.omp-modtext .mod__extender span { font-family: Torus, "Segoe UI", system-ui, sans-serif; }
