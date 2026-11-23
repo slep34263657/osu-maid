@@ -559,7 +559,7 @@ html.omp-modtext .mod__icon { width: auto; min-width: var(--icon-width); }
 html.omp-modtext .mod__icon::after {
   content: attr(data-acronym) !important; position: static; width: auto; height: 100%; padding: 0 .12em;
   background: none !important; -webkit-mask-image: none !important; mask-image: none !important;
-  color: var(--type-bg-colour); font-size: .52em !important; line-height: 1; letter-spacing: 0; white-space: nowrap;
+  color: var(--type-bg-colour); font: 700 .58em/1 Torus, "Segoe UI", system-ui, sans-serif !important; letter-spacing: 0; white-space: nowrap;
 }
 
 .omp-site-lb:not(.omp-side) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; padding: 10px 20px; margin: 0; border-radius: 0; }
@@ -673,7 +673,7 @@ html[data-omp-hide-locked] .medals-group__group:not(:has(.badge-achievement:not(
 
 /* mod icons: plain glyphs */
 html.omp-modplain .mod__icon::before { display: none !important; }
-html.omp-modplain .mod__icon[data-acronym]::after { content: ""; background: #fff !important; font-size: 0; }
+html.omp-modplain .mod__icon[data-acronym]::after { content: ""; background: var(--type-bg-colour) !important; font-size: 0; }
 .omp-seg { display: flex; flex: none; padding: 2px; gap: 2px; background: var(--hover); border-radius: 7px; }
 .omp-mrow > .omp-seg { flex-direction: row; }
 .omp-seg button { padding: .3em .7em; background: none; border: 0; border-radius: 5px; color: var(--dim); font: inherit; font-size: .9em; cursor: pointer; }
