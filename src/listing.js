@@ -19,7 +19,7 @@
     seededFor = location.search;
     fetch(`/beatmapsets/search${location.search}`, { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
       .then((r) => r.json())
-      .then((j) => { (j.beatmapsets || []).forEach((s) => sets.set(s.id, { id: s.id, bpm: s.bpm, title: s.title, original: s.title_unicode, artist: s.artist, artistOriginal: s.artist_unicode })); schedule(); })
+      .then((j) => { OMP.emitSearch((j.beatmapsets || []).map((s) => ({ id: s.id, bpm: s.bpm, title: s.title, original: s.title_unicode, artist: s.artist, artistOriginal: s.artist_unicode, maps: (s.beatmaps || []).map((b) => ({ id: b.id, mode: b.mode, r: b.difficulty_rating })) }))); })
       .catch(() => { /* the cards just stay as they are */ });
   }
 

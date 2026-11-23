@@ -7,7 +7,7 @@
 
   const publish = (text) => {
     try {
-      const sets = (JSON.parse(text).beatmapsets || []).map((s) => ({ id: s.id, bpm: s.bpm, title: s.title, original: s.title_unicode, artist: s.artist, artistOriginal: s.artist_unicode }));
+      const sets = (JSON.parse(text).beatmapsets || []).map((s) => ({ id: s.id, bpm: s.bpm, title: s.title, original: s.title_unicode, artist: s.artist, artistOriginal: s.artist_unicode, maps: (s.beatmaps || []).map((b) => ({ id: b.id, mode: b.mode, r: b.difficulty_rating })) }));
       if (sets.length) OMP.emitSearch(sets);
     } catch { /* not JSON */ }
   };

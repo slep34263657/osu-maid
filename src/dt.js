@@ -5,6 +5,8 @@
   OMP.DT_BASE = 'https://raw.githubusercontent.com/slep34263657/osu-maid/main/dt-stars/';
   const chunks = new Map();
   const stars = new Map();
+  const setMaps = new Map();
+  OMP.onSearch((list) => list.forEach((s) => { if (s.maps) setMaps.set(s.id, s.maps); }));
   let queued = false;
 
   function load(id) {
@@ -54,6 +56,23 @@
     }
   }
 
+  // set a colour variable (and the text colour) on `el` while DT is on, restore its own style when off
+  function tint(el, rating, on, varName, text) {
+    if (!el) return;
+    const style = () => el.getAttribute('style') || '';
+    if (el.dataset.ompStyleShown !== undefined && style() !== el.dataset.ompStyleShown) delete el.dataset.ompStyle;
+    if (on && rating != null) {
+      if (el.dataset.ompStyle === undefined) el.dataset.ompStyle = style();
+      el.style.setProperty(varName, OMP.starColour(rating));
+      if (text) el.style.color = OMP.starText(rating);
+      el.dataset.ompStyleShown = style();
+    } else if (el.dataset.ompStyle !== undefined) {
+      if (style() === el.dataset.ompStyleShown) { if (el.dataset.ompStyle) el.setAttribute('style', el.dataset.ompStyle); else el.removeAttribute('style'); }
+      delete el.dataset.ompStyle;
+      delete el.dataset.ompStyleShown;
+    }
+  }
+
   function fill(el, value, on) {
     const f = el && el.querySelector('.bar__fill');
     if (!f) return;
@@ -66,12 +85,14 @@
   function restoreAll() {
     document.querySelectorAll('[data-omp-text-orig]').forEach((e) => swap(e, '', false));
     document.querySelectorAll('[data-omp-title-orig]').forEach((e) => swap(e, '', false, 'title'));
+    document.querySelectorAll('[data-omp-style]').forEach((e) => tint(e, null, false));
     document.querySelectorAll('[data-omp-w]').forEach((e) => fill(e.parentElement, 0, false));
   }
 
   function decorate() {
     queued = false;
     const on = OMP.rate() !== 1;
+    decorateListing(on);
     const b = current();
     if (!b) { if (!on) restoreAll(); return; }
     const std = b.mode === 'osu';
@@ -99,6 +120,49 @@
     }
     const badge = document.querySelector('.beatmapset-header__diff-name .difficulty-badge__rating');
     if (badge && std) swap(badge, haveStars ? dtStars.toFixed(2) : '', haveStars);
+    if (badge && std) tint(badge.closest('.difficulty-badge'), haveStars ? dtStars : null, haveStars, '--bg', true);
+    decoratePicker(on);
+  }
+
+  const idOf = (href) => ((href || '').match(/(\d+)\/?$/) || [])[1];
+
+  // the difficulty circles on the beatmap page: ring colour follows the DT rating
+  function decoratePicker(on) {
+    document.querySelectorAll('.beatmapset-beatmap-picker__beatmap').forEach((a) => {
+      const id = idOf(a.getAttribute('href'));
+      if (on && id) load(Number(id));
+      tint(a.querySelector('.beatmap-icon'), on && stars.has(id) ? stars.get(id) : null, on && stars.has(id), '--diff');
+    });
+  }
+
+  // the difficulty list that opens from a listing card, and the dots on the card
+  function decorateListing(on) {
+    document.querySelectorAll('.beatmaps-popup-item').forEach((a) => {
+      const id = idOf(a.getAttribute('href'));
+      if (on && id) load(Number(id));
+      const has = on && stars.has(id);
+      const rating = a.querySelector('.difficulty-badge__rating');
+      swap(rating, has ? stars.get(id).toFixed(2) : '', has);
+      tint(a.querySelector('.difficulty-badge'), has ? stars.get(id) : null, has, '--bg', true);
+    });
+    document.querySelectorAll('.beatmapset-panel').forEach((card) => {
+      const id = Number(idOf((card.querySelector('.beatmapset-panel__main-link') || {}).href));
+      const maps = setMaps.get(id);
+      if (!maps) return;
+      const byMode = {};
+      [...maps].sort((x, y) => x.r - y.r).forEach((m) => { (byMode[m.mode] = byMode[m.mode] || []).push(m); });
+      const modeOf = (icon) => ({ 'osu!': 'osu', 'osu!taiko': 'taiko', 'osu!catch': 'fruits', 'osu!mania': 'mania' }[icon.title]);
+      let mode = null;
+      let n = 0;
+      card.querySelectorAll('.beatmapset-panel__extra-item--dots > *').forEach((el) => {
+        if (el.classList.contains('beatmapset-panel__beatmap-icon')) { mode = modeOf(el); n = 0; return; }
+        const m = mode && (byMode[mode] || [])[n++];
+        if (!m) return;
+        if (on && mode === 'osu') load(m.id);
+        const has = on && mode === 'osu' && stars.has(String(m.id));
+        tint(el, has ? stars.get(String(m.id)) : null, has, '--bg');
+      });
+    });
   }
 
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(() => { try { decorate(); } catch (e) { console.error('[osu! maid]', e); } }); } };

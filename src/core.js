@@ -27,20 +27,24 @@
   };
   OMP.gradeLabel = (r) => ({ X: 'SS', XH: 'SS', SH: 'S' }[r] || r);
 
-  const STARS = [[0.1, '#4290FB'], [1.25, '#4FC0FF'], [2, '#4FFFD5'], [2.5, '#7CFF4F'], [3.3, '#F6F05C'], [4.2, '#FF8068'], [4.9, '#FF4E6F'], [5.8, '#C645B8'], [6.7, '#6563DE'], [7.7, '#4B49C9'], [9, '#3A38A0']];
-  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-  OMP.starColour = (r) => {
-    if (r <= STARS[0][0]) return STARS[0][1];
-    for (let i = 1; i < STARS.length; i++) {
-      if (r <= STARS[i][0]) {
-        const [a, ca] = STARS[i - 1], [b, cb] = STARS[i];
+  const scale = (stops) => (r) => {
+    const g = 2.2;
+    if (r <= stops[0][0]) return stops[0][1];
+    for (let i = 1; i < stops.length; i++) {
+      if (r <= stops[i][0]) {
+        const [a, ca] = stops[i - 1], [b, cb] = stops[i];
         const t = (r - a) / (b - a);
-        const [x, y] = [rgb(ca), rgb(cb)];
-        return `rgb(${x.map((v, k) => Math.round(v + (y[k] - v) * t)).join(',')})`;
+        const hex = (h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
+        const [x, y] = [hex(ca), hex(cb)];
+        return `rgb(${x.map((v, k) => Math.round((v ** g + t * (y[k] ** g - v ** g)) ** (1 / g))).join(',')})`;
       }
     }
-    return STARS[STARS.length - 1][1];
+    return stops[stops.length - 1][1];
   };
+  const bodyScale = scale([[0.1, '#4290FB'], [1.25, '#4FC0FF'], [2, '#4FFFD5'], [2.5, '#7CFF4F'], [3.3, '#F6F05C'], [4.2, '#FF8068'], [4.9, '#FF4E6F'], [5.8, '#C645B8'], [6.7, '#6563DE'], [7.7, '#18158E'], [9, '#000000']]);
+  const textScale = scale([[9, '#F6F05C'], [9.9, '#FF8068'], [10.6, '#FF4E6F'], [11.5, '#C645B8'], [12.4, '#6563DE']]);
+  OMP.starColour = (r) => (r < 0.1 ? '#AAAAAA' : r >= 9 ? '#000000' : bodyScale(r));
+  OMP.starText = (r) => (r < 6.5 ? '#000000' : r < 9 ? '#F6F05C' : textScale(r));
 
   OMP.HITS = {
     osu: [['300', 'great'], ['100', 'ok'], ['50', 'meh'], ['miss', 'miss']],
