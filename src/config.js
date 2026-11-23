@@ -5,7 +5,7 @@ globalThis.OMP_CONFIG = {
   scale: { min: 12, max: 22, default: 15 },
   defaults: {
     v: 3,
-    enabled: true,
+    enabled: false, // off until the power button in the header is pressed
     theme: true,
     scale: 15,
     listBpm: true,
@@ -23,6 +23,7 @@ globalThis.OMP_CONFIG = {
     accountSearch: true,
     medalLink: true,
     hideLocked: false,
+    docsDark: true,
     scoreLayout: true,
     scoreImage: true,
     ppDecimals: false,

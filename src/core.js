@@ -112,7 +112,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, docsDark: false, black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
 
@@ -127,6 +127,7 @@
     html.classList.toggle('omp-black', e.theme && e.black);
     html.classList.toggle('omp-playart', !!e.playArt);
     html.classList.toggle('omp-scorelayout', !!e.scoreLayout);
+    html.classList.toggle('omp-docs', !!e.docsDark);
     html.classList.toggle('omp-ppdec', !!e.ppDecimals);
     html.classList.toggle('omp-modtext', e.modIcons === 'letters');
     html.classList.toggle('omp-modplain', e.modIcons === 'plain');
@@ -200,6 +201,9 @@
       ['listOutlines', 'Status outlines', 'Card outline in the colour of its status'],
       ['listTitles', 'Other title and artist', 'The romanised / original name next to the main one'],
       ['listMode', 'Remember mode', 'Reopen the listing in the last game mode'],
+    ] },
+    { id: 'docs', label: 'API docs', match: (p) => /^\/docs/.test(p), rows: [
+      ['docsDark', 'Dark docs', 'Dark theme for the API docs page'],
     ] },
     { id: 'account', label: 'Account settings', match: (p) => /^\/home\/account\/edit/.test(p), rows: [
       ['accountSearch', 'Search box', 'Filter the settings by typing; press / to jump to it'],

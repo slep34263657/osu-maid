@@ -693,23 +693,23 @@ html.omp-ppdec .play-detail__pp { min-width: 150px; }
 html.omp-ppdec .play-detail__pp, html.omp-ppdec .play-detail__accuracy, html.omp-ppdec .play-detail__pp-weight { font-variant-numeric: tabular-nums; }
 
 /* api docs page */
-html.omp-theme:has(.tocify-wrapper), html.omp-theme:has(.tocify-wrapper) body { background: hsl(var(--hsl-b5)); }
-html.omp-theme .page-wrapper { background: hsl(var(--hsl-b5)); color: #d8d8d8; }
-html.omp-theme .page-wrapper .content, html.omp-theme .page-wrapper .content :is(p, li, td, th, h1, h2, h3, h4, h5, strong, em, b, span, label, summary, small) { color: #d8d8d8; }
-html.omp-theme .page-wrapper .content h1 { background-image: none; background-color: hsl(var(--hsl-b4)); border-color: hsl(var(--hsl-b3)); }
-html.omp-theme .page-wrapper .content h2 { background-image: none; border-color: hsl(var(--hsl-b3)); }
-html.omp-theme .page-wrapper .content h3 { border-color: hsl(var(--hsl-b3)); }
-html.omp-theme .page-wrapper .content a { color: #7cc4ff; }
-html.omp-theme .page-wrapper .content a.badge, html.omp-theme .page-wrapper .content a.badge * { color: #fff; }
-html.omp-theme .page-wrapper .content code { background-color: rgba(255, 255, 255, .08); }
-html.omp-theme .page-wrapper .content table, html.omp-theme .page-wrapper .content th, html.omp-theme .page-wrapper .content td { border-color: hsl(var(--hsl-b3)); }
-html.omp-theme .page-wrapper .content td { background-color: rgba(255, 255, 255, .03); }
-html.omp-theme .page-wrapper .content tr:nth-child(even) td { background-color: rgba(255, 255, 255, .06); }
-html.omp-theme .page-wrapper .content h4.fancy-heading-panel { background-color: hsl(var(--hsl-b3)); color: #fff; }
-html.omp-theme .page-wrapper .content input { background-color: hsl(var(--hsl-b3)); color: #fff; border-color: hsl(var(--hsl-b2)); }
-html.omp-theme .page-wrapper .content hr { border-color: hsl(var(--hsl-b3)); }
-html.omp-theme .tocify-wrapper { background-color: hsl(var(--hsl-b6)); }
-html.omp-theme .tocify-wrapper input.search { background-color: hsl(var(--hsl-b4)); }
-html.omp-theme .tocify-wrapper ul.tocify-subheader { background-color: hsl(var(--hsl-b5)); }
-html.omp-theme .page-wrapper .dark-box { background-color: hsl(var(--hsl-b4)); }
-html.omp-theme .page-wrapper pre, html.omp-theme .page-wrapper blockquote, html.omp-theme .page-wrapper aside.notice { background-color: hsl(var(--hsl-b6)); }
+html.omp-docs:has(.tocify-wrapper), html.omp-docs:has(.tocify-wrapper) body { background: hsl(var(--hsl-b5)); }
+html.omp-docs .page-wrapper { background: hsl(var(--hsl-b5)); color: #d8d8d8; }
+html.omp-docs .page-wrapper .content, html.omp-docs .page-wrapper .content :is(p, li, td, th, h1, h2, h3, h4, h5, strong, em, b, span, label, summary, small) { color: #d8d8d8; }
+html.omp-docs .page-wrapper .content h1 { background-image: none; background-color: hsl(var(--hsl-b4)); border-color: hsl(var(--hsl-b3)); }
+html.omp-docs .page-wrapper .content h2 { background-image: none; border-color: hsl(var(--hsl-b3)); }
+html.omp-docs .page-wrapper .content h3 { border-color: hsl(var(--hsl-b3)); }
+html.omp-docs .page-wrapper .content a { color: #7cc4ff; }
+html.omp-docs .page-wrapper .content a.badge, html.omp-docs .page-wrapper .content a.badge * { color: #fff; }
+html.omp-docs .page-wrapper .content code { background-color: rgba(255, 255, 255, .08); }
+html.omp-docs .page-wrapper .content table, html.omp-docs .page-wrapper .content th, html.omp-docs .page-wrapper .content td { border-color: hsl(var(--hsl-b3)); }
+html.omp-docs .page-wrapper .content td { background-color: rgba(255, 255, 255, .03); }
+html.omp-docs .page-wrapper .content tr:nth-child(even) td { background-color: rgba(255, 255, 255, .06); }
+html.omp-docs .page-wrapper .content h4.fancy-heading-panel { background-color: hsl(var(--hsl-b3)); color: #fff; }
+html.omp-docs .page-wrapper .content input { background-color: hsl(var(--hsl-b3)); color: #fff; border-color: hsl(var(--hsl-b2)); }
+html.omp-docs .page-wrapper .content hr { border-color: hsl(var(--hsl-b3)); }
+html.omp-docs .tocify-wrapper { background-color: hsl(var(--hsl-b6)); }
+html.omp-docs .tocify-wrapper input.search { background-color: hsl(var(--hsl-b4)); }
+html.omp-docs .tocify-wrapper ul.tocify-subheader { background-color: hsl(var(--hsl-b5)); }
+html.omp-docs .page-wrapper .dark-box { background-color: hsl(var(--hsl-b4)); }
+html.omp-docs .page-wrapper pre, html.omp-docs .page-wrapper blockquote, html.omp-docs .page-wrapper aside.notice { background-color: hsl(var(--hsl-b6)); }
