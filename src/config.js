@@ -26,6 +26,7 @@ globalThis.OMP_CONFIG = {
     docsTheme: 'grey',
     scoreLayout: true,
     scoreImage: true,
+    playHours: true,
     ppDecimals: false,
     modIcons: 'site',
     copyDesc: true,

@@ -1,4 +1,4 @@
-// pp decimals and the modding Total tab.
+// pp decimals, play time in hours, and the modding Total tab.
 (() => {
   'use strict';
 
@@ -10,6 +10,22 @@
       const exact = Number(el.title.replace(/,/g, ''));
       const want = on && Number.isFinite(exact) ? exact.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : el.dataset.ompPp;
       if (node.textContent !== want) node.textContent = want;
+    });
+  }
+
+  const DAYS = /^\s*\d+d \d+h \d+m\s*$/;
+  function playTime(on) {
+    document.querySelectorAll('span[data-omp-days], span[title$=" hours"], span[data-orig-title$=" hours"]').forEach((el) => {
+      const hours = el.dataset.ompHours || el.getAttribute('title') || el.getAttribute('data-orig-title');
+      if (!el.dataset.ompDays) {
+        if (!DAYS.test(el.textContent) || !on) return;
+        el.dataset.ompDays = el.textContent.trim();
+        el.dataset.ompHours = hours;
+      }
+      const [show, tip] = on ? [el.dataset.ompHours, el.dataset.ompDays] : [el.dataset.ompDays, el.dataset.ompHours];
+      if (el.textContent !== show) el.textContent = show;
+      if (el.hasAttribute('title')) el.setAttribute('title', tip);
+      if (el.hasAttribute('data-orig-title')) el.setAttribute('data-orig-title', tip);
     });
   }
 
@@ -35,6 +51,7 @@
     queued = false;
     const c = OMP.settings();
     pp(!!c.ppDecimals);
+    playTime(!!c.playHours);
     if (c.modTotal) total();
   }
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(() => { try { decorate(); } catch (e) { console.error('[osu! minimal]', e); } }); } };
