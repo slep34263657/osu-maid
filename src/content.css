@@ -728,3 +728,4 @@ html.omp-docs-black body { --hsl-b1: 0, 0%, 26%; --hsl-b2: 0, 0%, 14%; --hsl-b3:
 .omp-acc button { padding: .3em .7em; background: var(--hover); border: 0; border-radius: 6px; color: var(--dim); font: inherit; font-size: .9em; cursor: pointer; }
 .omp-acc button:hover { color: var(--text); }
 html.omp-accent body { --base-hue-override: var(--omp-hue) !important; --colour-pink-hue: var(--omp-hue) !important; }
+#omp-menu .omp-mrow { font-size: calc(var(--omp-k, 15) * 0.8px); }
