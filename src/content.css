@@ -720,3 +720,4 @@ html.omp-docs body { --hsl-b1: 240, 5%, 32%; --hsl-b2: 240, 5%, 20%; --hsl-b3: 2
 html.omp-docs-black body { --hsl-b1: 0, 0%, 26%; --hsl-b2: 0, 0%, 14%; --hsl-b3: 0, 0%, 8%; --hsl-b4: 0, 0%, 5%; --hsl-b5: 0, 0%, 2%; --hsl-b6: 0, 0%, 0%; }
 #omp-tools.omp-tools-fixed { position: fixed; top: 8px; right: 14px; z-index: 5000; margin: 0; padding: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 15px; }
 #omp-menu details, #omp-menu summary { border: 0 !important; box-shadow: none !important; }
+#omp-menu details::before, #omp-menu details::after, #omp-menu summary::before { display: none !important; }
