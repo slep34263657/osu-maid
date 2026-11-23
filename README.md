@@ -36,7 +36,7 @@ userscript for osu.ppy.sh ♡
 
 ## install
 
-1. install [Violentmonkey](https://violentmonkey.github.io/)
+1. install [Violentmonkey](https://violentmonkey.github.io/) or [Tampermonkey](https://www.tampermonkey.net/) (untested)
 2. open [`osu-maid.user.js`](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js)
 
 settings: gear in the header.
