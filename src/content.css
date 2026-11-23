@@ -713,3 +713,4 @@ html.omp-docs .tocify-wrapper input.search { background-color: hsl(var(--hsl-b4)
 html.omp-docs .tocify-wrapper ul.tocify-subheader { background-color: hsl(var(--hsl-b5)); }
 html.omp-docs .page-wrapper .dark-box { background-color: hsl(var(--hsl-b4)); }
 html.omp-docs .page-wrapper pre, html.omp-docs .page-wrapper blockquote, html.omp-docs .page-wrapper aside.notice { background-color: hsl(var(--hsl-b6)); }
+html.omp-docs .page-wrapper .content, html.omp-docs .page-wrapper .content * { text-shadow: none; }
