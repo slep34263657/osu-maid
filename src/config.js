@@ -23,7 +23,7 @@ globalThis.OMP_CONFIG = {
     accountSearch: true,
     medalLink: true,
     hideLocked: false,
-    docsDark: true,
+    docsTheme: 'grey',
     scoreLayout: true,
     scoreImage: true,
     ppDecimals: false,

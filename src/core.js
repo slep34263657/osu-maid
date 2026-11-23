@@ -107,12 +107,13 @@
 
   const normalize = (s) => ({
     ...CFG.defaults, ...(s || {}),
+    docsTheme: s && s.docsDark === false && !s.docsTheme ? 'off' : (s && s.docsTheme) || CFG.defaults.docsTheme,
     modIcons: s && s.modIcons === 'game' ? 'plain' : (s && s.modIcons) || CFG.defaults.modIcons,
     v: CFG.defaults.v,
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, docsDark: false, black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
 
@@ -127,7 +128,8 @@
     html.classList.toggle('omp-black', e.theme && e.black);
     html.classList.toggle('omp-playart', !!e.playArt);
     html.classList.toggle('omp-scorelayout', !!e.scoreLayout);
-    html.classList.toggle('omp-docs', !!e.docsDark);
+    html.classList.toggle('omp-docs', e.docsTheme !== 'off');
+    html.classList.toggle('omp-docs-black', e.docsTheme === 'black');
     html.classList.toggle('omp-ppdec', !!e.ppDecimals);
     html.classList.toggle('omp-modtext', e.modIcons === 'letters');
     html.classList.toggle('omp-modplain', e.modIcons === 'plain');
@@ -203,7 +205,7 @@
       ['listMode', 'Remember mode', 'Reopen the listing in the last game mode'],
     ] },
     { id: 'docs', label: 'API docs', match: (p) => /^\/docs/.test(p), rows: [
-      ['docsDark', 'Dark docs', 'Dark theme for the API docs page'],
+      ['docsTheme', 'Dark docs', '', [['off', 'Off'], ['grey', 'Grey'], ['black', 'Black']]],
     ] },
     { id: 'account', label: 'Account settings', match: (p) => /^\/home\/account\/edit/.test(p), rows: [
       ['accountSearch', 'Search box', 'Filter the settings by typing; press / to jump to it'],
@@ -269,7 +271,7 @@
     if (!m.hidden) { closeMenu(); return; }
     buildMenu();
     const bar = document.querySelector('.nav2-header');
-    m.style.top = `${(bar ? Math.round(bar.getBoundingClientRect().bottom) : 60) + 6}px`;
+    m.style.top = bar ? `${Math.round(bar.getBoundingClientRect().bottom) + 6}px` : '52px';
     m.hidden = false;
     setGear(true);
   }
@@ -277,14 +279,17 @@
   function renderTools() {
     document.getElementById('omp-tools')?.remove();
     const nav = document.querySelector('.nav2-header .nav2');
-    if (!nav) return;
+    const floating = !nav && /^\/docs/.test(location.pathname);
+    if (!nav && !floating) return;
     const on = settings.enabled;
     const tools = document.createElement('div');
     tools.id = 'omp-tools';
     tools.innerHTML = `${on ? `<button class="omp-icon-btn" id="omp-gear" title="osu! maid settings" aria-label="osu! maid settings" aria-pressed="false">${ICON_GEAR}</button>` : ''}
       <button class="omp-icon-btn" id="omp-power" title="${on ? 'Turn osu! maid off' : 'Turn osu! maid on'}" aria-label="osu! maid" aria-pressed="${on}">${ICON_POWER}</button>`;
-    const group = [...nav.children].find((c) => c.classList.contains('nav2__colgroup--icons'));
-    nav.insertBefore(tools, group || null);
+    if (floating) { tools.classList.add('omp-tools-fixed'); html.append(tools); } else {
+      const group = [...nav.children].find((c) => c.classList.contains('nav2__colgroup--icons'));
+      nav.insertBefore(tools, group || null);
+    }
     tools.querySelector('#omp-power').addEventListener('click', () => OMP.set({ enabled: !settings.enabled }));
     if (on) tools.querySelector('#omp-gear').addEventListener('click', onGear);
   }
@@ -295,7 +300,7 @@
     applyScale(settings.scale);
     applyTheme();
     watchStorage();
-    const ensure = () => { if (document.querySelector('.nav2-header .nav2') && !document.getElementById('omp-tools')) renderTools(); };
+    const ensure = () => { if ((document.querySelector('.nav2-header .nav2') || /^\/docs/.test(location.pathname)) && !document.getElementById('omp-tools')) renderTools(); };
     document.addEventListener('DOMContentLoaded', ensure);
     new MutationObserver(ensure).observe(html, { childList: true, subtree: true });
     ensure();
