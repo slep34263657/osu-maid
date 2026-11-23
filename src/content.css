@@ -553,11 +553,13 @@ html.omp-theme .beatmapset-header__buttons .btn-osu-big:focus-visible {
 
 }
 
-/* mods as letters instead of icons */
+/* mod icons: letters */
+html.omp-modtext .mod__icon::before { display: none !important; }
+html.omp-modtext .mod__icon { width: auto; min-width: var(--icon-width); }
 html.omp-modtext .mod__icon::after {
-  content: attr(data-acronym) !important; background: none !important;
-  -webkit-mask-image: none !important; mask-image: none !important;
-  font-size: .42em !important; letter-spacing: 0;
+  content: attr(data-acronym) !important; position: static; width: auto; height: 100%; padding: 0 .12em;
+  background: none !important; -webkit-mask-image: none !important; mask-image: none !important;
+  color: var(--type-bg-colour); font-size: .52em !important; line-height: 1; letter-spacing: 0; white-space: nowrap;
 }
 
 .omp-site-lb:not(.omp-side) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; padding: 10px 20px; margin: 0; border-radius: 0; }
@@ -669,8 +671,9 @@ html[data-omp-hide-locked] .medals-group__group:not(:has(.badge-achievement:not(
 .tooltip-achievement .omp-osekai { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 10px 8px; font-size: 12px; font-weight: 600; color: inherit; opacity: .7; text-decoration: none; border-top: 1px solid rgba(255, 255, 255, .1); transition: opacity .15s; }
 .tooltip-achievement .omp-osekai:hover { opacity: 1; text-decoration: none; color: inherit; }
 
-/* mod icons: game images */
-html.omp-modgame .mod__icon[data-acronym]::after { font-size: 0; }
+/* mod icons: plain glyphs */
+html.omp-modplain .mod__icon::before { display: none !important; }
+html.omp-modplain .mod__icon[data-acronym]::after { content: ""; background: #fff !important; font-size: 0; }
 .omp-seg { display: flex; flex: none; padding: 2px; gap: 2px; background: var(--hover); border-radius: 7px; }
 .omp-mrow > .omp-seg { flex-direction: row; }
 .omp-seg button { padding: .3em .7em; background: none; border: 0; border-radius: 5px; color: var(--dim); font: inherit; font-size: .9em; cursor: pointer; }

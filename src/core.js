@@ -107,6 +107,7 @@
 
   const normalize = (s) => ({
     ...CFG.defaults, ...(s || {}),
+    modIcons: s && s.modIcons === 'game' ? 'plain' : (s && s.modIcons) || CFG.defaults.modIcons,
     v: CFG.defaults.v,
   });
 
@@ -127,7 +128,7 @@
     html.classList.toggle('omp-playart', !!e.playArt);
     html.classList.toggle('omp-scorelayout', !!e.scoreLayout);
     html.classList.toggle('omp-modtext', e.modIcons === 'letters');
-    html.classList.toggle('omp-modgame', e.modIcons === 'game');
+    html.classList.toggle('omp-modplain', e.modIcons === 'plain');
   };
 
   const listeners = [];
@@ -177,7 +178,7 @@
     ] },
     { id: 'scores', label: 'Scores', match: (p) => /^\/(users|scores)\//.test(p) || /^\/beatmapsets\/\d+/.test(p), rows: [
       ['ppDecimals', 'pp to 2 decimals', 'Instead of rounded pp (on profiles)'],
-      ['modIcons', 'Mod icons', '', [['site', 'Site'], ['letters', 'Letters'], ['game', 'Game']]],
+      ['modIcons', 'Mod icons', '', [['site', 'Site'], ['letters', 'Letters'], ['plain', 'Plain']]],
     ] },
     { id: 'score', label: 'Score page', match: (p) => /^\/scores\//.test(p), rows: [
       ['scoreLayout', 'Results screen layout', 'Laid out like the in-game results screen'],

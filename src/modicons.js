@@ -1,4 +1,4 @@
-// Mod icons: letters, or the game's icon images from the repo's mods/ folder.
+// Mod icons: letters, or plain glyphs from the repo's mods/ folder.
 (() => {
   'use strict';
 
@@ -31,14 +31,14 @@
       pending.delete(acr);
       if (!blob) return;
       urls.set(acr, URL.createObjectURL(blob));
-      rules += `html.omp-modgame .mod__icon[data-acronym="${acr}"]::after{content:"";background:var(--type-fg-colour);-webkit-mask:url(${urls.get(acr)}) center/62% no-repeat;mask:url(${urls.get(acr)}) center/62% no-repeat}\n`;
+      rules += `html.omp-modplain .mod__icon[data-acronym="${acr}"]::after{-webkit-mask:url(${urls.get(acr)}) center/contain no-repeat;mask:url(${urls.get(acr)}) center/contain no-repeat}\n`;
       sheet.textContent = rules;
     });
   }
 
   function decorate() {
     queued = false;
-    if (OMP.settings().modIcons !== 'game') return;
+    if (OMP.settings().modIcons !== 'plain') return;
     document.querySelectorAll('.mod__icon[data-acronym]').forEach((e) => load(e.dataset.acronym));
   }
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(decorate); } };
