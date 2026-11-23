@@ -272,6 +272,7 @@
     buildMenu();
     const bar = document.querySelector('.nav2-header');
     m.style.top = bar ? `${Math.round(bar.getBoundingClientRect().bottom) + 6}px` : '52px';
+    m.classList.toggle('omp-menu-left', !bar);
     m.hidden = false;
     setGear(true);
   }

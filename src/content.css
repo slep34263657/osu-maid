@@ -718,6 +718,7 @@ html.omp-docs .page-wrapper .content, html.omp-docs .page-wrapper .content * { t
 /* api docs palette */
 html.omp-docs body { --hsl-b1: 240, 5%, 32%; --hsl-b2: 240, 5%, 20%; --hsl-b3: 240, 5%, 15%; --hsl-b4: 240, 5%, 11%; --hsl-b5: 240, 6%, 7%; --hsl-b6: 240, 6%, 5%; }
 html.omp-docs-black body { --hsl-b1: 0, 0%, 26%; --hsl-b2: 0, 0%, 14%; --hsl-b3: 0, 0%, 8%; --hsl-b4: 0, 0%, 5%; --hsl-b5: 0, 0%, 2%; --hsl-b6: 0, 0%, 0%; }
-#omp-tools.omp-tools-fixed { position: fixed; top: 8px; right: 14px; z-index: 5000; margin: 0; padding: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 15px; }
+#omp-tools.omp-tools-fixed { position: fixed; top: 10px; left: 10px; right: auto; z-index: 2147483000; margin: 0; padding: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 15px; }
 #omp-menu details, #omp-menu summary { border: 0 !important; box-shadow: none !important; }
 #omp-menu details::before, #omp-menu details::after, #omp-menu summary::before { display: none !important; }
+#omp-menu.omp-menu-left { left: 10px; right: auto; top: 52px !important; }
