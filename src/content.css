@@ -687,3 +687,7 @@ html:is(.omp-modtext, .omp-modplain) .mod__extender {
 }
 html:is(.omp-modtext, .omp-modplain) .mod__extender span { font-size: .52em; }
 html.omp-modtext .mod__extender span { font-family: Torus, "Segoe UI", system-ui, sans-serif; }
+
+/* pp with decimals: fixed-width numbers so the columns stay aligned */
+html.omp-ppdec .play-detail__pp { min-width: 150px; }
+html.omp-ppdec .play-detail__pp, html.omp-ppdec .play-detail__accuracy, html.omp-ppdec .play-detail__pp-weight { font-variant-numeric: tabular-nums; }

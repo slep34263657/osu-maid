@@ -127,6 +127,7 @@
     html.classList.toggle('omp-black', e.theme && e.black);
     html.classList.toggle('omp-playart', !!e.playArt);
     html.classList.toggle('omp-scorelayout', !!e.scoreLayout);
+    html.classList.toggle('omp-ppdec', !!e.ppDecimals);
     html.classList.toggle('omp-modtext', e.modIcons === 'letters');
     html.classList.toggle('omp-modplain', e.modIcons === 'plain');
   };
