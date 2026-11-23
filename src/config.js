@@ -24,6 +24,7 @@ globalThis.OMP_CONFIG = {
     medalLink: true,
     hideLocked: false,
     docsTheme: 'grey',
+    accent: '',
     scoreLayout: true,
     scoreImage: true,
     playHours: true,

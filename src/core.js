@@ -113,7 +113,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
 
@@ -122,8 +122,29 @@
     html.style.setProperty('--omp-nz', eff().theme ? (k / 19).toFixed(3) : '1');
   };
 
+  const hueOf = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    const max = Math.max(r, g, b), d = max - Math.min(r, g, b);
+    if (!d) return 0;
+    const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return Math.round(((h * 60) + 360) % 360);
+  };
+  const applyAccent = () => {
+    const hex = eff().accent;
+    if (/^#[0-9a-f]{6}$/i.test(hex || '')) {
+      const h = String(hueOf(hex));
+      html.style.setProperty('--omp-hue', h);
+      html.style.setProperty('--omp-accent', hex);
+      html.classList.add('omp-accent');
+    } else {
+      ['--omp-hue', '--omp-accent'].forEach((p) => html.style.removeProperty(p));
+      html.classList.remove('omp-accent');
+    }
+  };
+
   const applyTheme = () => {
     const e = eff();
+    applyAccent();
     html.classList.toggle('omp-theme', e.theme);
     html.classList.toggle('omp-black', e.theme && e.black);
     html.classList.toggle('omp-playart', !!e.playArt);
@@ -232,6 +253,7 @@
       <div class="omp-mblock">
         ${srow('theme', 'Dark theme', 'Dark colours and a compact header')}
         <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black', 'Black instead of dark grey')}</div>
+        <div class="omp-mrow"><span><b>Accent colour</b><small>Tints links, highlights and buttons</small></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour">${settings.accent ? '<button type="button" data-accent-reset>Reset</button>' : ''}</span></div>
         <div class="omp-mrow"><span><b>Text size</b><small>Header and this menu</small></span>
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
       </div>
@@ -249,6 +271,7 @@
       e.stopPropagation();
       const pick = e.target.closest && e.target.closest('[data-choice]');
       if (pick) { OMP.set({ [pick.dataset.key]: pick.dataset.choice }); buildMenu(); return; }
+      if (e.target.closest && e.target.closest('[data-accent-reset]')) { OMP.set({ accent: '' }); buildMenu(); return; }
       const step = e.target.closest && e.target.closest('[data-step]');
       if (step) { OMP.set({ scale: Math.min(CFG.scale.max, Math.max(CFG.scale.min, settings.scale + Number(step.dataset.step))) }); buildMenu(); }
     });
@@ -256,8 +279,10 @@
       const d = e.target;
       if (d.dataset && d.dataset.g) { if (d.open) openGroups.add(d.dataset.g); else openGroups.delete(d.dataset.g); }
     }, true);
+    menuEl.addEventListener('input', (e) => { if (e.target.dataset.accent !== undefined) OMP.set({ accent: e.target.value }); });
     menuEl.addEventListener('change', (e) => {
       const t = e.target;
+      if (t.dataset.accent !== undefined) { buildMenu(); return; }
       if (t.dataset.set) OMP.set({ [t.dataset.set]: t.checked });
       buildMenu();
     });

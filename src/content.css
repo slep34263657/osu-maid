@@ -190,7 +190,7 @@ html.omp-list-outlines .beatmapset-panel[style*="--omp-status"]::after {
   background: var(--hover); border: 1px solid var(--border); border-radius: 1em; transition: background .15s, border-color .15s;
 }
 .omp-sw::after { content: ""; position: absolute; top: .15em; left: .15em; width: .9em; height: .9em; border-radius: 50%; background: var(--hint); transition: transform .15s, background .15s; }
-.omp-sw:checked { background: var(--text); border-color: var(--text); }
+.omp-sw:checked { background: var(--omp-accent, var(--text)); border-color: var(--omp-accent, var(--text)); }
 .omp-sw:checked::after { transform: translateX(1em); background: var(--bg); }
 .omp-sw:focus-visible { outline: 1px solid var(--dim); outline-offset: 2px; }
 
@@ -238,8 +238,8 @@ html.omp-compact-dl .omp-dl { min-width: 0; }
 html.omp-compact-dl .omp-dl .btn-osu-big__left { display: none; }
 
 html.omp-theme .btn-osu-big:not([class*="--danger"], [class*="--pink"], [class*="--warning"], [class*="--forum"], .btn-osu-big--download, .btn-osu-big--download-stable, [class*="--activated"], [class*="--disabled"], [class*="--store-cart"], [class*="--chat-send"], .js-activated, [disabled]) {
-  --bg: #000; --hover-bg: #1a1a1c; --focus-bg: #1a1a1c; --active-bg: #1a1a1c;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+  --bg: rgba(255, 255, 255, .09); --hover-bg: rgba(255, 255, 255, .17); --focus-bg: rgba(255, 255, 255, .17); --active-bg: rgba(255, 255, 255, .22);
+  box-shadow: none;
 }
 
 html.omp-theme .beatmapset-header__buttons .btn-osu-big {
@@ -678,7 +678,7 @@ html.omp-modplain .mod__icon[data-acronym]::after { content: ""; background: var
 .omp-mrow > .omp-seg { flex-direction: row; }
 .omp-seg button { padding: .3em .7em; background: none; border: 0; border-radius: 5px; color: var(--dim); font: inherit; font-size: .9em; cursor: pointer; }
 .omp-seg button:hover { color: var(--text); }
-.omp-seg button[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 600; }
+.omp-seg button[aria-pressed="true"] { background: var(--omp-accent, var(--text)); color: var(--bg); font-weight: 600; }
 
 /* rate chip without the hexagon: a small rounded pill in the mod's colour */
 html:is(.omp-modtext, .omp-modplain) .mod__extender {
@@ -722,3 +722,9 @@ html.omp-docs-black body { --hsl-b1: 0, 0%, 26%; --hsl-b2: 0, 0%, 14%; --hsl-b3:
 #omp-menu details, #omp-menu summary { border: 0 !important; box-shadow: none !important; }
 #omp-menu details::before, #omp-menu details::after, #omp-menu summary::before { display: none !important; }
 #omp-menu.omp-menu-left { left: 10px; right: auto; top: 52px !important; }
+
+.omp-acc { display: flex; align-items: center; gap: 8px; flex: none; }
+.omp-acc input[type="color"] { width: 2.4em; height: 1.8em; padding: 0; border: 1px solid var(--border); border-radius: 6px; background: none; cursor: pointer; }
+.omp-acc button { padding: .3em .7em; background: var(--hover); border: 0; border-radius: 6px; color: var(--dim); font: inherit; font-size: .9em; cursor: pointer; }
+.omp-acc button:hover { color: var(--text); }
+html.omp-accent body { --base-hue-override: var(--omp-hue) !important; --colour-pink-hue: var(--omp-hue) !important; }
