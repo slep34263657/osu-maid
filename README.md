@@ -29,6 +29,7 @@ userscript for osu.ppy.sh ♡
 - remembered listing mode
 - modding page opens on total
 - account settings search
+- DT mode button (experimental)
 
 </td>
 </tr>

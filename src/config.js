@@ -25,6 +25,8 @@ globalThis.OMP_CONFIG = {
     hideLocked: false,
     docsTheme: 'grey',
     accent: '',
+    dtMode: false,
+    dtOn: false,
     scoreLayout: true,
     scoreImage: true,
     playHours: true,

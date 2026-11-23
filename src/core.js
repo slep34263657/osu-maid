@@ -113,9 +113,10 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, dtMode: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
+  OMP.rate = () => (eff().dtMode && settings.dtOn ? 1.5 : 1);
 
   const applyScale = (k) => {
     html.style.setProperty('--omp-k', String(k));
@@ -162,7 +163,7 @@
   function applySettings(prev) {
     applyScale(settings.scale);
     applyTheme();
-    if (!prev || prev.enabled !== settings.enabled) renderTools();
+    if (!prev || prev.enabled !== settings.enabled || prev.dtMode !== settings.dtMode || prev.dtOn !== settings.dtOn) renderTools();
     listeners.forEach((fn) => { try { fn(settings); } catch (e) { console.error('[osu! minimal]', e); } });
   }
 
@@ -254,6 +255,7 @@
         ${srow('theme', 'Dark theme', 'Dark colours and a compact header')}
         <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black', 'Black instead of dark grey')}</div>
         <div class="omp-mrow"><span><b>Accent colour</b><small>Tints links, highlights and buttons</small></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour">${settings.accent ? '<button type="button" data-accent-reset>Reset</button>' : ''}</span></div>
+        ${srow('dtMode', 'DT everywhere (experimental)', 'Adds a DT button in the header: BPM, length, AR, OD and stars as with DT. Stars: osu!standard ranked maps only')}
         <div class="omp-mrow"><span><b>Text size</b><small>Header and this menu</small></span>
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
       </div>
@@ -311,7 +313,8 @@
     const on = settings.enabled;
     const tools = document.createElement('div');
     tools.id = 'omp-tools';
-    tools.innerHTML = `${on ? `<button class="omp-icon-btn" id="omp-gear" title="osu! maid settings" aria-label="osu! maid settings" aria-pressed="false">${ICON_GEAR}</button>` : ''}
+    const dt = on && settings.dtMode ? `<button class="omp-icon-btn" id="omp-dt" title="DT mode (experimental)" aria-label="DT mode" aria-pressed="${!!settings.dtOn}">DT</button>` : '';
+    tools.innerHTML = `${dt}${on ? `<button class="omp-icon-btn" id="omp-gear" title="osu! maid settings" aria-label="osu! maid settings" aria-pressed="false">${ICON_GEAR}</button>` : ''}
       <button class="omp-icon-btn" id="omp-power" title="${on ? 'Turn osu! maid off' : 'Turn osu! maid on'}" aria-label="osu! maid" aria-pressed="${on}">${ICON_POWER}</button>`;
     if (floating) { tools.classList.add('omp-tools-fixed'); html.append(tools); } else {
       const group = [...nav.children].find((c) => c.classList.contains('nav2__colgroup--icons'));
@@ -319,6 +322,7 @@
     }
     tools.querySelector('#omp-power').addEventListener('click', () => OMP.set({ enabled: !settings.enabled }));
     if (on) tools.querySelector('#omp-gear').addEventListener('click', onGear);
+    if (dt) tools.querySelector('#omp-dt').addEventListener('click', () => OMP.set({ dtOn: !settings.dtOn }));
   }
 
   OMP.start = () => {

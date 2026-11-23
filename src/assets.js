@@ -4,6 +4,17 @@
 
   const HOSTS = new Set(['assets.ppy.sh', 'a.ppy.sh', 'raw.githubusercontent.com']);
 
+  OMP.text = (url) => new Promise((resolve) => {
+    let u;
+    try { u = new URL(url); } catch { resolve(null); return; }
+    if (u.protocol !== 'https:' || !HOSTS.has(u.hostname)) { resolve(null); return; }
+    const plain = () => fetch(u.href).then((r) => (r.ok ? r.text() : null)).then(resolve).catch(() => resolve(null));
+    if (typeof GM_xmlhttpRequest !== 'function') { plain(); return; }
+    try {
+      GM_xmlhttpRequest({ url: u.href, method: 'GET', timeout: 20000, onload: (r) => resolve(r.status >= 200 && r.status < 300 ? r.responseText : null), onerror: () => resolve(null), ontimeout: () => resolve(null) });
+    } catch { plain(); }
+  });
+
   OMP.blob = (url) => new Promise((resolve) => {
     let u;
     try { u = new URL(url); } catch { resolve(null); return; }

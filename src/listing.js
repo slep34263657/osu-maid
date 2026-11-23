@@ -97,10 +97,13 @@
         item = bpmItem();
         row.insertBefore(item, row.querySelector('.beatmapset-panel__stats-item--date'));
       }
-      if (item.dataset.id !== String(id)) {
+      const rate = OMP.rate();
+      if (item.dataset.id !== String(id) || item.dataset.rate !== String(rate)) {
         item.dataset.id = String(id);
-        item.title = `BPM: ${fmtBpm(meta.bpm)}`;
-        item.lastElementChild.textContent = `${fmtBpm(meta.bpm)} BPM`;
+        item.dataset.rate = String(rate);
+        const bpm = rate === 1 ? fmtBpm(meta.bpm) : String(Math.round(meta.bpm * rate));
+        item.title = `BPM: ${bpm}${rate === 1 ? '' : ' (DT)'}`;
+        item.lastElementChild.textContent = `${bpm} BPM`;
       }
     });
     if (missing && seededFor !== location.search) seed();
