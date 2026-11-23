@@ -1,15 +1,42 @@
-# osu-maid
+# osu! maid
 
-> wip 
+<table>
+<tr>
+<td width="260" valign="top"><img src="maid.png" width="260" alt="osu! maid"></td>
+<td valign="top">
 
-- **[osu-dark](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-dark.user.js)**: dark grey or pitch black theme for the osu! site.
-- **[osu-layout](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-layout.user.js)**: makes profile pages wider and two columns, with map covers behind score rows.
-- **[beatmap-listing](https://raw.githubusercontent.com/slep34263657/osu-maid/main/beatmap-listing.user.js)**: shows BPM and status outlines on beatmap cards.
-- **[osu-results](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-results.user.js)**: lays out the score page like a results screen.
-- **[osu-score-image](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-score-image.user.js)**: saves a score as an image.
-- **[osu-maid](https://raw.githubusercontent.com/slep34263657/osu-maid/main/osu-maid.user.js)**: all of the above in one script. install this instead of the others, not with them.
+userscript for osu.ppy.sh ♡
+
+<sub>wip~</sub>
+
+- dark theme, pure black option, compact header, text size
+- power button in the header to turn it all off
+- score page as a results screen
+- replay, copy link and save as image buttons
+- score image export
+- beatmap cover on profile score cards
+- lazerboard stats on profiles
+- score rank on profiles
+- hide unachieved medals
+- osekai link in medal popups
+- pp to 2 decimals
+- mod icons: site, letters or game
+- map background and background button on the beatmap page
+- slim download buttons
+- copy description and map info
+- bpm and status outlines on listing cards
+- other title and artist on listing cards
+- remembered listing mode
+- modding page opens on total
+- account settings search
+
+</td>
+</tr>
+</table>
 
 ## install
 
-1. install [Violentmonkey](https://violentmonkey.github.io/) (tampermonkey should also work).
-2. click a script name above, then **install**.
+1. install [Violentmonkey](https://violentmonkey.github.io/)
+2. open `osu-maid.user.js`
+
+settings: gear in the header.
