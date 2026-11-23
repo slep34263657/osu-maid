@@ -731,3 +731,7 @@ html.omp-docs-black body { --hsl-b1: 0, 0%, 26%; --hsl-b2: 0, 0%, 14%; --hsl-b3:
 .omp-acc button:hover { color: var(--text); }
 html.omp-accent body { --base-hue-override: var(--omp-hue) !important; --colour-pink-hue: var(--omp-hue) !important; }
 #omp-menu .omp-mrow { font-size: calc(var(--omp-k, 15) * 0.8px); }
+html.omp-accent body :is([class*="supporter"], [class*="supporter"] *) {
+  --hsl-pink-1: 333, var(--c-saturation-1), var(--c-lightness-1); --hsl-pink-2: 333, var(--c-saturation-2), var(--c-lightness-2);
+  --hsl-pink-3: 333, var(--c-saturation-3), var(--c-lightness-3); --hsl-pink-4: 333, var(--c-saturation-4), var(--c-lightness-4);
+}
