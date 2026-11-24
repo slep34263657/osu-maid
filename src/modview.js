@@ -196,7 +196,7 @@
           if (row) row.remove();
           row = document.createElement('tr');
           row.className = 'omp-pp-row';
-          row.innerHTML = '<th class="beatmap-stats-table__label">SS pp</th><td class="beatmap-stats-table__bar"></td><td class="beatmap-stats-table__value"></td>';
+          row.innerHTML = '<th class="beatmap-stats-table__label">SS pp</th><td class="beatmap-stats-table__value" colspan="2"></td>';
           starRow.after(row);
         }
         const cell = row.lastElementChild;

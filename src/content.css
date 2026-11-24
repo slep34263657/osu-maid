@@ -787,3 +787,9 @@ html.omp-acc-btn .btn-circle:hover, html.omp-acc-btn .btn-circle:focus-visible {
 #omp-combos button:hover { color: var(--text, #e8e8ea); }
 #omp-combos button[aria-pressed="true"] { background: var(--omp-accent, var(--text, #e8e8ea)); color: var(--bg, #0e0e10); font-weight: 600; }
 .omp-pp-row .beatmap-stats-table__label { white-space: nowrap; }
+
+.omp-pp-row .beatmap-stats-table__value { text-align: right; }
+html.omp-on .beatmapset-stats__rating-chart { height: 14px; }
+html.omp-on .beatmapset-stats__row--rating { padding-top: 8px; }
+html.omp-on .beatmapset-stats__rating-header { padding-bottom: 3px; }
+html.omp-on .beatmapset-stats__rating-values { padding-bottom: 6px; }

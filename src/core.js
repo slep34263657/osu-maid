@@ -114,7 +114,7 @@
     accentOn: s && s.accentOn !== undefined ? !!s.accentOn : !!(s && s.accent),
     docsTheme: s && s.docsDark === false && !s.docsTheme ? 'off' : (s && s.docsTheme) || CFG.defaults.docsTheme,
     modView: s && s.modView !== undefined ? !!s.modView : !!(s && s.dtMode),
-    modCombo: (s && s.modCombo) || (s && s.dtOn ? 'DT' : ''),
+    modCombo: s && s.modCombo !== undefined ? s.modCombo : (s && s.dtOn ? 'DT' : ''),
     modIcons: s && s.modIcons === 'game' ? 'plain' : (s && s.modIcons) || CFG.defaults.modIcons,
     v: CFG.defaults.v,
   });
@@ -161,6 +161,7 @@
   const applyTheme = () => {
     const e = eff();
     applyAccent();
+    html.classList.toggle('omp-on', settings.enabled);
     html.classList.toggle('omp-theme', e.theme);
     html.classList.toggle('omp-black', e.theme && e.black);
     html.classList.toggle('omp-playart', !!e.playArt);
