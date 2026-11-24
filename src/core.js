@@ -120,7 +120,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, modView: false, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.combo = () => (eff().modView ? settings.modCombo || '' : '');
@@ -167,6 +167,7 @@
     html.classList.toggle('omp-playart', !!e.playArt);
     html.classList.toggle('omp-scorelayout', !!e.scoreLayout);
     html.classList.toggle('omp-docs', e.docsTheme !== 'off');
+    html.classList.toggle('omp-nocode', !e.docsCode);
     html.classList.toggle('omp-docs-black', e.docsTheme === 'black');
     html.classList.toggle('omp-ppdec', !!e.ppDecimals);
     html.classList.toggle('omp-modtext', e.modIcons === 'letters');
@@ -249,6 +250,7 @@
     ] },
     { id: 'docs', label: 'API docs', match: (p) => /^\/docs/.test(p), rows: [
       ['docsTheme', 'Dark docs', [['off', 'Off'], ['grey', 'Grey'], ['black', 'Black']]],
+      ['docsCode', 'Code panel'],
     ] },
     { id: 'account', label: 'Account settings', match: (p) => /^\/home\/account\/edit/.test(p), rows: [
       ['accountSearch', 'Search box'],
@@ -367,7 +369,7 @@
     const on = settings.enabled;
     const tools = document.createElement('div');
     tools.id = 'omp-tools';
-    const dt = on && settings.modView ? `<button class="omp-icon-btn omp-modbtn" id="omp-dt" title="Mod view (experimental)" aria-label="Mod view" aria-pressed="${!!settings.modCombo}">${settings.modCombo || 'Mods'}</button>` : '';
+    const dt = on && settings.modView && !floating ? `<button class="omp-icon-btn omp-modbtn" id="omp-dt" title="Mod view (experimental)" aria-label="Mod view" aria-pressed="${!!settings.modCombo}">${settings.modCombo || 'Mods'}</button>` : '';
     tools.innerHTML = `${dt}${on ? `<button class="omp-icon-btn" id="omp-gear" title="osu! maid settings" aria-label="osu! maid settings" aria-pressed="false">${ICON_GEAR}</button>` : ''}
       <button class="omp-icon-btn" id="omp-power" title="${on ? 'Turn osu! maid off' : 'Turn osu! maid on'}" aria-label="osu! maid" aria-pressed="${on}">${ICON_POWER}</button>`;
     if (floating) { tools.classList.add('omp-tools-fixed'); html.append(tools); } else {

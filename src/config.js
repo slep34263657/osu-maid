@@ -24,6 +24,7 @@ globalThis.OMP_CONFIG = {
     medalLink: true,
     hideLocked: false,
     docsTheme: 'grey',
+    docsCode: true,
     accentOn: false,
     accentButtons: true,
     accentLinks: true,
