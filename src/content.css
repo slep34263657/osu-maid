@@ -819,3 +819,7 @@ html.omp-on .beatmapset-stats__rating-values span:last-child { color: #a5cf1a; }
 .omp-pp-row > td.omp-pending { opacity: .55; font-weight: 400; }
 
 .omp-hide { display: none !important; }
+
+/* contact line at the bottom of the settings menu */
+#omp-menu .omp-mcontact { margin: 1em 0 .2em; padding-top: .7em; border-top: 1px solid var(--border); font-size: .85em; color: var(--hint); }
+#omp-menu .omp-mcontact a { color: var(--omp-accent, var(--text)); text-decoration: underline; text-underline-offset: 2px; }

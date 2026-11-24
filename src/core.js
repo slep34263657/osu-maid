@@ -291,7 +291,8 @@
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
       </div>
       <h3>${here.length ? 'Other pages' : 'Pages'}</h3>
-      ${other.map(group).join('')}`;
+      ${other.map(group).join('')}
+      <p class="omp-mcontact">Bugs or suggestions? <a href="https://osu.ppy.sh/home/messages/users/34263657" target="_blank" rel="noopener">DM me on osu! ♡</a></p>`;
   }
 
   function ensureMenu() {
