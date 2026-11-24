@@ -31,7 +31,7 @@
     const passed = b.passcount || 0;
     const events = passed + sf + sq;
 
-    const W = 300, H = 108, top = 4, base = 92, bw = W / n;
+    const W = 300, H = 96, top = 4, base = 92, bw = W / n;
     let bars = '';
     for (let i = 0; i < n; i++) {
       const hq = (q[i] / max) * (base - top);
@@ -43,11 +43,7 @@
         + (hf ? `<rect class="omp-fc-fail" x="${x}" y="${(base - hq - hf).toFixed(2)}" width="${(bw - 0.5).toFixed(2)}" height="${hf.toFixed(2)}"/>` : '')
         + '</g>';
     }
-    const ticks = [0, 25, 50, 75, 100].map((t) => {
-      const x = (t / 100) * W;
-      const anchor = t === 0 ? 'start' : t === 100 ? 'end' : 'middle';
-      return `<line class="omp-fc-tick" x1="${x}" x2="${x}" y1="${base}" y2="${base + 4}"/><text class="omp-fc-lbl" x="${x}" y="${base + 14}" text-anchor="${anchor}">${t === 100 ? '100% of map' : `${t}%`}</text>`;
-    }).join('');
+    const ticks = '';
 
     // where half of the quits / fails happen
     const half = (a, total) => { let c = 0; for (let i = 0; i < a.length; i++) { c += a[i]; if (c >= total / 2) return i; } return null; };

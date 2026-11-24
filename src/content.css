@@ -12,6 +12,11 @@ html.omp-theme body {
   --hsl-b1: 240, 5%, 32%;  --hsl-b2: 240, 5%, 20%;  --hsl-b3: 240, 5%, 15%;
   --hsl-b4: 240, 5%, 12%;  --hsl-b5: 240, 5%, 9%;   --hsl-b6: 240, 5%, 6%;
 }
+html.omp-theme.omp-accent body {
+  --hsl-p: var(--omp-hue), 100%, 50%;
+  --hsl-h1: var(--omp-hue), 100%, 70%;
+  --hsl-h2: var(--omp-hue), 50%, 45%;
+}
 html.omp-theme body,
 html.omp-theme .osu-layout--body { background: var(--bg) !important; }
 
@@ -748,7 +753,7 @@ html.omp-accent body :is([class*="supporter"], [class*="supporter"] *) {
 .omp-fc-quitbar { background: #f5b042; }
 .omp-fc-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px; margin-bottom: 4px; }
 .omp-fc-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
-.omp-fc-svg { display: block; width: 100%; height: 92px; overflow: visible; }
+.omp-fc-svg { display: block; width: 100%; height: 80px; overflow: visible; }
 .omp-fc-fail { fill: #ff6b6b; }
 .omp-fc-quit { fill: #f5b042; }
 .omp-fc-hit { fill: currentColor; fill-opacity: 0; }
