@@ -290,7 +290,15 @@
       const d = e.target;
       if (d.dataset && d.dataset.g) { if (d.open) openGroups.add(d.dataset.g); else openGroups.delete(d.dataset.g); }
     }, true);
-    menuEl.addEventListener('input', (e) => { if (e.target.dataset.accent !== undefined) OMP.set({ accent: e.target.value, accentOn: true }); });
+    // while a colour is being picked the menu fades out, so the page underneath can be seen
+    let peek = 0;
+    menuEl.addEventListener('input', (e) => {
+      if (e.target.dataset.accent === undefined) return;
+      OMP.set({ accent: e.target.value, accentOn: true });
+      menuEl.classList.add('omp-peek');
+      clearTimeout(peek);
+      peek = setTimeout(() => menuEl.classList.remove('omp-peek'), 1800);
+    });
     menuEl.addEventListener('change', (e) => {
       const t = e.target;
       if (t.dataset.accent !== undefined) { buildMenu(); return; }
