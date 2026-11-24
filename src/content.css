@@ -800,4 +800,5 @@ html.omp-on .beatmapset-stats__rating-values { padding-bottom: 6px; }
 /* api docs without the code panel: the examples and their tabs go, the text takes the room */
 html.omp-nocode .page-wrapper .dark-box, html.omp-nocode .page-wrapper .lang-selector,
 html.omp-nocode .page-wrapper .content pre, html.omp-nocode .page-wrapper .content blockquote, html.omp-nocode .page-wrapper .content .annotation { display: none !important; }
-html.omp-nocode .page-wrapper .content > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, table, aside, details, dl, form) { margin-right: 0 !important; max-width: 920px; }
+html.omp-nocode .page-wrapper .content > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, table, aside, details, dl, form) { margin-right: 0 !important; }
+html.omp-nocode .page-wrapper .content > :is(h3, h4, h5, h6, p, ul, ol, table, aside, details, dl, form) { max-width: 920px; }
