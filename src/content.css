@@ -233,6 +233,8 @@ html.omp-playart .play-detail[style*="--omp-art"] > .play-detail__group--top::af
 .beatmapset-header[data-omp-bg] + .beatmapset-info .beatmapset-info__scrollable::after { display: none; }
 .beatmapset-header[data-omp-bg] + .beatmapset-info .beatmap-success-rate { background: transparent; }
 .beatmapset-header[data-omp-bg] .beatmapset-stats__row,
+.beatmapset-header[data-omp-bg] .beatmapset-beatmap-picker,
+.beatmapset-header[data-omp-bg] .beatmapset-status--show-icon,
 .beatmapset-header[data-omp-bg] .beatmapset-status--show { background-color: color-mix(in srgb, var(--bg, #0e0e10) 80%, transparent); }
 
 html.omp-compact-dl .omp-dl-video { display: none; }
