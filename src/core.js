@@ -111,13 +111,14 @@
 
   const normalize = (s) => ({
     ...CFG.defaults, ...(s || {}),
+    accentOn: s && s.accentOn !== undefined ? !!s.accentOn : !!(s && s.accent),
     docsTheme: s && s.docsDark === false && !s.docsTheme ? 'off' : (s && s.docsTheme) || CFG.defaults.docsTheme,
     modIcons: s && s.modIcons === 'game' ? 'plain' : (s && s.modIcons) || CFG.defaults.modIcons,
     v: CFG.defaults.v,
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, failChart: false, dtMode: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, failChart: false, dtMode: false, accentOn: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.rate = () => (eff().dtMode && settings.dtOn ? 1.5 : 1);
@@ -135,7 +136,7 @@
     return Math.round(((h * 60) + 360) % 360);
   };
   const applyAccent = () => {
-    const hex = eff().accent;
+    const hex = eff().accentOn ? eff().accent : '';
     if (/^#[0-9a-f]{6}$/i.test(hex || '')) {
       const h = String(hueOf(hex));
       html.style.setProperty('--omp-hue', h);
@@ -262,7 +263,8 @@
       <div class="omp-mblock">
         ${srow('theme', 'Dark theme', 'Dark colours and a compact header')}
         <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black', 'Black instead of dark grey')}</div>
-        <div class="omp-mrow"><span><b>Accent colour</b><small>Tints links, highlights and buttons</small></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour">${settings.accent ? '<button type="button" data-accent-reset>Reset</button>' : ''}</span></div>
+        ${srow('accentOn', 'Accent colour', 'Tints links, buttons and highlights')}
+        <div class="omp-msub${settings.accentOn ? '' : ' omp-off'}"><div class="omp-mrow"><span><b>Colour</b></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour"></span></div></div>
         ${srow('dtMode', 'DT everywhere (experimental)', 'Adds a DT button in the header: BPM, length, AR, OD and stars as with DT. Stars: osu!standard ranked maps only')}
         <div class="omp-mrow"><span><b>Text size</b><small>Header and this menu</small></span>
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
@@ -281,7 +283,6 @@
       e.stopPropagation();
       const pick = e.target.closest && e.target.closest('[data-choice]');
       if (pick) { OMP.set({ [pick.dataset.key]: pick.dataset.choice }); buildMenu(); return; }
-      if (e.target.closest && e.target.closest('[data-accent-reset]')) { OMP.set({ accent: '' }); buildMenu(); return; }
       const step = e.target.closest && e.target.closest('[data-step]');
       if (step) { OMP.set({ scale: Math.min(CFG.scale.max, Math.max(CFG.scale.min, settings.scale + Number(step.dataset.step))) }); buildMenu(); }
     });
@@ -289,11 +290,12 @@
       const d = e.target;
       if (d.dataset && d.dataset.g) { if (d.open) openGroups.add(d.dataset.g); else openGroups.delete(d.dataset.g); }
     }, true);
-    menuEl.addEventListener('input', (e) => { if (e.target.dataset.accent !== undefined) OMP.set({ accent: e.target.value }); });
+    menuEl.addEventListener('input', (e) => { if (e.target.dataset.accent !== undefined) OMP.set({ accent: e.target.value, accentOn: true }); });
     menuEl.addEventListener('change', (e) => {
       const t = e.target;
       if (t.dataset.accent !== undefined) { buildMenu(); return; }
-      if (t.dataset.set) OMP.set({ [t.dataset.set]: t.checked });
+      if (t.dataset.set === 'accentOn' && t.checked && !settings.accent) OMP.set({ accentOn: true, accent: '#ff66aa' });
+      else if (t.dataset.set) OMP.set({ [t.dataset.set]: t.checked });
       buildMenu();
     });
     return menuEl;
