@@ -117,7 +117,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, failChart: false, dtMode: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, failChart: false, dtMode: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.rate = () => (eff().dtMode && settings.dtOn ? 1.5 : 1);
@@ -202,6 +202,7 @@
       ['playArt', 'Map art on scores', 'The beatmap cover behind each score card'],
       ['lazerboard', 'Lazerboard stats', 'Leaderboard ranks; asks lazerboard.melguy.com (sends the player id)'],
       ['lbSide', 'Pop stats out', 'Beside the profile on wide windows, not under the stats', 'lazerboard'],
+      ['statusColour', 'Online status colour', 'Green when online, red when offline'],
       ['scoreRank', 'Score rank', 'Asks score.respektive.pw (sends the player id)'],
       ['medalLink', 'Osekai link on medals', 'A link to the medal on Osekai in its popup'],
       ['hideLocked', 'Hide unachieved medals', 'Only the medals you have; also a switch in the medals header'],

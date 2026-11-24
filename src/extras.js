@@ -1,4 +1,4 @@
-// pp decimals, play time in hours, and the modding Total tab.
+// pp decimals, play time in hours, online status colour, and the modding Total tab.
 (() => {
   'use strict';
 
@@ -29,6 +29,15 @@
     });
   }
 
+  // online status on profiles: green while online, red when it says offline, "last seen" stays as it is
+  function status(on) {
+    document.querySelectorAll('.profile-links__item').forEach((e) => {
+      const t = e.textContent;
+      const v = !on ? '' : /offline/i.test(t) ? 'offline' : /online/i.test(t) ? 'online' : '';
+      if (v) e.dataset.ompStatus = v; else delete e.dataset.ompStatus;
+    });
+  }
+
   let totalFor = null;
   let pickedPraise = null;
   document.addEventListener('click', (e) => {
@@ -52,6 +61,7 @@
     const c = OMP.settings();
     pp(!!c.ppDecimals);
     playTime(!!c.playHours);
+    status(!!c.statusColour);
     if (c.modTotal) total();
   }
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(() => { try { decorate(); } catch (e) { console.error('[osu! minimal]', e); } }); } };

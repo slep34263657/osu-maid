@@ -31,6 +31,7 @@ globalThis.OMP_CONFIG = {
     scoreLayout: true,
     scoreImage: true,
     playHours: true,
+    statusColour: true,
     ppDecimals: false,
     modIcons: 'site',
     copyDesc: true,
