@@ -45,7 +45,6 @@
     const ticks = '';
 
     return `
-      <span class="omp-fc-info" tabindex="0" aria-label="Estimate based on a sample of plays">i</span>
       <div class="omp-fc-split">
         <span class="omp-fc-pass" style="flex:${passed}"></span><span class="omp-fc-failbar" style="flex:${sf}"></span><span class="omp-fc-quitbar" style="flex:${sq}"></span>
       </div>
@@ -69,10 +68,12 @@
     const box = document.querySelector('.beatmap-success-rate');
     const b = current();
     const mine = document.querySelector('.omp-fc');
-    if (!on || !box || !b) { if (mine) mine.remove(); document.querySelectorAll('.omp-fc-hidden').forEach((e) => e.classList.remove('omp-fc-hidden')); return; }
+    if (!on || !box || !b) { if (mine) mine.remove(); document.querySelectorAll('.omp-fc-hidden').forEach((e) => e.classList.remove('omp-fc-hidden')); document.querySelectorAll('.omp-fc-head').forEach((e) => e.classList.remove('omp-fc-head')); return; }
     const orig = box.querySelector('.beatmap-success-rate__chart');
     if (!orig) return;
     orig.classList.add('omp-fc-hidden');
+    const heads = box.querySelectorAll('.beatmap-success-rate__header');
+    if (heads[1]) heads[1].classList.add('omp-fc-head');
     if (mine && mine.dataset.id === String(b.id) && mine.previousElementSibling === orig) return;
     if (mine) mine.remove();
     const el = document.createElement('div');
