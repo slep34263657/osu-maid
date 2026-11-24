@@ -269,7 +269,7 @@
         ${srow('theme', 'Dark theme', 'Dark colours and a compact header')}
         <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black', 'Black instead of dark grey')}</div>
         ${srow('accentOn', 'Accent colour', 'Tints links, buttons and highlights')}
-        <div class="omp-msub${settings.accentOn ? '' : ' omp-off'}"><div class="omp-mrow"><span><b>Colour</b></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour"></span></div>
+        <div class="omp-msub"${settings.accentOn ? '' : ' hidden'}><div class="omp-mrow"><span><b>Colour</b></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour"></span></div>
           ${srow('accentButtons', 'Buttons', 'Circle buttons and pink buttons')}
           ${srow('accentLinks', 'Links and text', 'Links, tabs and stat values')}
           ${srow('accentHighlights', 'Highlights', 'Underlines, rings and active states')}
