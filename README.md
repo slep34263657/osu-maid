@@ -30,6 +30,7 @@ userscript for osu.ppy.sh ♡
 - modding page opens on total
 - account settings search
 - DT mode button (experimental)
+- clearer fail chart on beatmap pages
 
 </td>
 </tr>

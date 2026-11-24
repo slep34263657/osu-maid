@@ -5,13 +5,13 @@ import { fileURLToPath } from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const read = (name) => fs.readFileSync(path.join(root, 'src', name), 'utf8');
 
-const VERSION = '1.4.2';
+const VERSION = '1.5.2';
 const NAME = 'osu! maid';
 const OUT = 'osu-maid.user.js';
 const MASCOT = `data:image/png;base64,${fs.readFileSync(path.join(root, 'mascot.png')).toString('base64')}`;
 const ICON = `data:image/png;base64,${fs.readFileSync(path.join(root, 'icon.png')).toString('base64')}`;
 
-const MODULES = ['config.js', 'core.js', 'hook.js', 'assets.js', 'scorerank.js', 'lazerboard.js', 'playart.js', 'beatmapsite.js', 'score.js', 'extras.js', 'accountsearch.js', 'modicons.js', 'medals.js', 'dt.js', 'listing.js', 'main.js'];
+const MODULES = ['config.js', 'core.js', 'hook.js', 'assets.js', 'scorerank.js', 'lazerboard.js', 'playart.js', 'beatmapsite.js', 'score.js', 'extras.js', 'accountsearch.js', 'modicons.js', 'medals.js', 'dt.js', 'failchart.js', 'listing.js', 'main.js'];
 
 const header = `// ==UserScript==
 // @name         ${NAME}

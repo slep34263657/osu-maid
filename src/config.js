@@ -25,6 +25,7 @@ globalThis.OMP_CONFIG = {
     hideLocked: false,
     docsTheme: 'grey',
     accent: '',
+    failChart: true,
     dtMode: false,
     dtOn: false,
     scoreLayout: true,
