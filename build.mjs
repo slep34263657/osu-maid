@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const read = (name) => fs.readFileSync(path.join(root, 'src', name), 'utf8');
 
-const VERSION = '1.7.1';
+const VERSION = '1.7.2';
 const NAME = 'osu! maid';
 const OUT = 'osu-maid.user.js';
 const MASCOT = `data:image/png;base64,${fs.readFileSync(path.join(root, 'mascot.png')).toString('base64')}`;
@@ -18,7 +18,7 @@ const header = `// ==UserScript==
 // @icon         ${ICON}
 // @namespace    osu-web-minimal
 // @version      ${VERSION}
-// @description  A dark, compact osu! website with a results-screen score page, score images, beatmap listing and profile extras.
+// @description  Dark theme with a custom accent colour, a results-screen score page, DT mode and extras for profiles, beatmaps and the listing.
 // @match        https://osu.ppy.sh/*
 // @run-at       document-start
 // @noframes
