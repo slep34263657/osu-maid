@@ -17,6 +17,16 @@ Hidden changes the star rating in the current calculator (measured on 50 maps: H
 At most 2000 new maps are processed per run (oldest first), so a large backlog is cleared over several days. `list_from` only moves up to the oldest set still waiting.
 A map that fails to download or calculate stays in `pending` in `meta.json` and is retried on later runs; after 5 tries it is listed in `gave_up`.
 
+## Qualified maps
+
+Qualified std maps (osu.direct search status 3, a short list that is read completely on every run) are calculated too, before ranked/loved maps.
+`meta.json` keeps `qualified`: {map id: md5 of the file the stored values come from}. Qualified maps are checked against the listed checksum:
+- a qualified map that is not stored yet is calculated (the downloaded file must match the listed md5, otherwise that mirror is skipped);
+- a stored qualified map whose listed md5 changed (disqualified, edited, requalified) is recalculated;
+- a qualified map that becomes ranked or loved is not added again; if its file changed since the stored values it is recalculated once, then it stops being tracked;
+- a map that left qualification without being ranked stays tracked, so a later change is noticed.
+Some very old qualified sets cannot be downloaded from any mirror (osu.direct 404, osu.ppy.sh empty); they are retried for 5 runs and then listed in `gave_up`.
+
 ## Version check
 
 The calculator version comes from the package that was built. Before doing anything, the script compares it with `version` in `mod-stars/meta.json`, and the calculator's combo order with `combos`.

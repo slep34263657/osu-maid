@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add newly ranked/loved osu!standard maps to mod-stars/ (star ratings and SS pp for the common mod combos). Standard library only.
+"""Add newly qualified/ranked/loved osu!standard maps to mod-stars/ (star ratings and SS pp for the common mod combos). Standard library only.
 
     python tools/mod-stats/update_mod_stats.py --tool "dotnet <build dir>/mod-stats-calc.dll"      # normal run
     python tools/mod-stats/update_mod_stats.py --tool ... --dry-run                               # list what would be added
@@ -11,6 +11,7 @@ No .osu file is kept. Exit codes: 0 ok (including nothing to do), 2 listing fail
 """
 import argparse
 import gzip
+import hashlib
 import json
 import os
 import shlex
@@ -34,8 +35,13 @@ LIST_MIRRORS = [("osu.direct/search", "https://osu.direct/api/v2/search?mode=0&s
 FILE_MIRRORS = [("osu.direct", "https://osu.direct/api/osu/{id}"),
                 ("osu.ppy.sh", "https://osu.ppy.sh/osu/{id}"),
                 ("catboy.best", "https://catboy.best/osu/{id}")]
+QUALIFIED = 3          # osu.direct search status for qualified sets (listed completely on every run: it is a short list)
 STATUSES = {1: "ranked", 4: "loved"}   # approved (2) is a closed set of 2007-2015 maps, nothing new appears there
 DOWN = set()           # mirrors to treat as failing (testing the fallback): --simulate-fail osu.direct,osu.ppy.sh
+
+
+class ListingFailed(RuntimeError):
+    """Every listing mirror failed (the command line wrapper exits with code 2)."""
 
 
 def log(*a):
@@ -72,23 +78,27 @@ def parse_date(s):
     return datetime.fromisoformat(s.replace("Z", "+00:00")) if s else None
 
 
-def list_new(known, list_from):
-    """{beatmap_id: ranked_date} for std beatmaps in ranked/loved sets since list_from that mod-stars does not have yet."""
+def fetch_page(status, offset):
+    """One page (up to 100 sets) of the search listing for a status, trying every listing mirror."""
+    err = []
+    for name, tpl in LIST_MIRRORS:
+        try:
+            data = json.loads(http(tpl.format(status=status, offset=offset), name))
+            time.sleep(DELAY)
+            return data
+        except Exception as e:
+            err.append(f"{name}: {e}")
+    raise ListingFailed(f"LISTING FAILED on every mirror ({'; '.join(err)}). Nothing was changed.")
+
+
+def list_new(known, list_from, seen=None):
+    """{beatmap_id: ranked_date} for std beatmaps in ranked/loved sets since list_from that mod-stars does not have yet.
+    `seen` (optional dict) is filled with {beatmap_id: md5 checksum} for every std ranked/loved/approved map in that window, known or not."""
     found = {}
     for status in STATUSES:
         offset = 0
         while True:
-            data, err = None, []
-            for name, tpl in LIST_MIRRORS:
-                try:
-                    data = json.loads(http(tpl.format(status=status, offset=offset), name))
-                    time.sleep(DELAY)
-                    break
-                except Exception as e:
-                    err.append(f"{name}: {e}")
-            if data is None:
-                print(f"LISTING FAILED on every mirror ({'; '.join(err)}). Nothing was changed.", file=sys.stderr)
-                sys.exit(2)
+            data = fetch_page(status, offset)
             if not data:
                 break
             stop = False
@@ -98,15 +108,61 @@ def list_new(known, list_from):
                     stop = True
                     continue
                 for b in s.get("beatmaps", []):
-                    if b.get("mode_int") == 0 and b.get("status") in ("ranked", "approved", "loved") and str(b["id"]) not in known:
-                        found[b["id"]] = rd
+                    if b.get("mode_int") == 0 and b.get("status") in ("ranked", "approved", "loved"):
+                        if seen is not None:
+                            seen[b["id"]] = b.get("checksum")
+                        if str(b["id"]) not in known:
+                            found[b["id"]] = rd
             if stop or len(data) < 100:
                 break
             offset += len(data)
     return found
 
 
-def download(bid, dest):
+def list_qualified():
+    """{beatmap_id: (md5 checksum, qualification date)} for every std difficulty in a currently qualified set (all pages, a short list)."""
+    out, offset = {}, 0
+    while True:
+        data = fetch_page(QUALIFIED, offset)
+        if not data:
+            break
+        for s in data:
+            for b in s.get("beatmaps", []):
+                if b.get("mode_int") == 0 and b.get("status") == "qualified":
+                    out[b["id"]] = (b.get("checksum"), parse_date(s.get("ranked_date")))
+        if len(data) < 100:
+            break
+        offset += len(data)
+    return out
+
+
+def plan_qualified(known, registry, qual, seen):
+    """Decide which qualified maps need (re)calculating. `registry` is meta["qualified"]: {id: md5 the stored values were calculated from}.
+    Returns ({id: expected md5} to calculate, new registry).
+      - qualified and not stored yet            -> calculate
+      - qualified, stored from an older md5     -> recalculate (the map was changed after a disqualification)
+      - left qualification and is now ranked/loved: md5 differs from the stored one -> recalculate once, then stop tracking; same md5 -> just stop tracking
+      - left qualification without being ranked (disqualified): keep tracking, so a later change is noticed
+    Maps stored while ranked/loved (not in the registry) are never touched."""
+    todo, reg = {}, {}
+    for bid, (md5, _) in qual.items():
+        key = str(bid)
+        if key not in known or (key in registry and registry[key] != md5):
+            todo[bid] = md5
+        reg[key] = registry.get(key, md5) if key in known else md5
+    for key, md5 in registry.items():
+        if int(key) in qual:
+            continue
+        if int(key) in seen:
+            if seen[int(key)] and seen[int(key)] != md5:
+                todo[int(key)] = seen[int(key)]
+        else:
+            reg[key] = md5
+    return todo, reg
+
+
+def download(bid, dest, md5=None):
+    """Download one .osu, trying every file mirror. With md5, a mirror that serves different bytes than the listing says is skipped."""
     errs = []
     for name, tpl in FILE_MIRRORS:
         try:
@@ -117,6 +173,9 @@ def download(bid, dest):
             continue
         head = body[:64].lstrip(b"\xef\xbb\xbf")
         if head.startswith(b"osu file format") and b"[HitObjects]" in body:
+            if md5 and hashlib.md5(body).hexdigest() != md5:
+                errs.append(f"{name}: file differs from the listed checksum")
+                continue
             Path(dest).write_bytes(body)
             return name
         errs.append(f"{name}: not an .osu file")
@@ -223,22 +282,34 @@ def main():
     pp_chunks = load_chunks(pp_folder)
     known = {k for d in chunks.values() for k in d}
     list_from = parse_date(args.list_from or meta.get("list_from") or "2026-11-04T00:00:00Z")
-    log(f"{len(known)} maps in mod-stars; listing ranked/loved sets since {list_from.isoformat()}")
-    found = list_new(known, list_from)
+    log(f"{len(known)} maps in mod-stars; listing qualified sets and ranked/loved sets since {list_from.isoformat()}")
+    seen = {}
+    try:
+        found = list_new(known, list_from, seen)
+        qual = list_qualified()
+    except ListingFailed as e:
+        print(e, file=sys.stderr)
+        sys.exit(2)
+    qtodo, registry = plan_qualified(known, meta.get("qualified", {}), qual, seen)
     for k, v in meta.get("pending", {}).items():   # maps that failed on earlier runs are retried (up to MAX_TRIES times in total)
-        if int(k) not in known:
+        if "q" in v:
+            if int(k) not in known or registry.get(k) != v["q"]:
+                qtodo.setdefault(int(k), v["q"])
+        elif int(k) not in known:
             found.setdefault(int(k), parse_date(v["d"]))
     todo = sorted(found, key=lambda b: (found[b], b))   # oldest first so list_from can advance safely
-    log(f"{len(todo)} new std beatmaps missing; this run takes at most {args.max_maps}")
+    items = [(b, qtodo[b]) for b in sorted(qtodo)] + [(b, None) for b in todo]   # qualified maps first
+    n_new_q = sum(1 for b in qtodo if str(b) not in known)
+    log(f"{len(todo)} new ranked/loved std beatmaps missing; qualified: {n_new_q} new, {len(qtodo) - n_new_q} to recalculate; this run takes at most {args.max_maps}")
     if args.dry_run:
         return
-    batch = todo[:args.max_maps]
+    batch = items[:args.max_maps]
 
     added, skipped, mirror_use = {}, [], {}
     with tempfile.TemporaryDirectory() as tmp:
-        for n, bid in enumerate(batch, 1):
+        for n, (bid, md5) in enumerate(batch, 1):
             try:
-                m = download(bid, Path(tmp) / f"{bid}.osu")
+                m = download(bid, Path(tmp) / f"{bid}.osu", md5)
                 mirror_use[m] = mirror_use.get(m, 0) + 1
             except Exception as e:
                 skipped.append((bid, str(e)[:200]))
@@ -258,9 +329,18 @@ def main():
         pp_chunks.setdefault(bid // 1000, {})[str(bid)] = [None if v is None else round(v, 1) for v in row]
     touched = write_chunks(folder, chunks, {b // 1000 for b in added})
     write_chunks(pp_folder, pp_chunks, {b // 1000 for b in added})
-    # list_from moves up only to the oldest set still waiting (or just before the newest set seen when nothing waits); ids already stored are never listed twice
-    remaining = [found[b] for b in todo if b not in added and b not in {s[0] for s in skipped}]
-    remaining += [found[b] for b in todo[args.max_maps:]]
+    for bid in added:   # qualified maps now match their listed checksum; maps that left qualification stop being tracked
+        if bid in qtodo:
+            if bid in qual:
+                registry[str(bid)] = qtodo[bid]
+            else:
+                registry.pop(str(bid), None)
+    for key in [k for k, v in registry.items() if int(k) in seen and int(k) not in qtodo and seen[int(k)] in (None, v)]:
+        registry.pop(key, None)   # ranked/loved with the same file as when it was qualified: stable from now on
+    failed_ids = {s_[0] for s_ in skipped}
+    # list_from moves up only to the oldest ranked/loved set still waiting (or to the newest set seen when nothing waits); ids already stored are never listed twice
+    remaining = [found[b] for b in todo if b not in added and b not in failed_ids]
+    remaining += [found[b] for b, md5 in items[args.max_maps:] if md5 is None]
     if remaining:
         meta["list_from"] = min(remaining).strftime("%Y-%m-%dT%H:%M:%SZ")
     elif found:
@@ -268,22 +348,27 @@ def main():
     # maps that failed stay in "pending" and are retried by later runs; after MAX_TRIES they move to "gave_up" so nothing is silent
     old = meta.get("pending", {})
     pending, gave_up = {}, meta.get("gave_up", [])
+    now_s = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     for bid, _ in skipped:
-        if bid in found:
+        if bid in found or bid in qtodo:
             n = old.get(str(bid), {}).get("n", 0) + 1
             if n < MAX_TRIES:
-                pending[str(bid)] = {"d": found[bid].strftime("%Y-%m-%dT%H:%M:%SZ"), "n": n}
+                entry = {"d": (found[bid].strftime("%Y-%m-%dT%H:%M:%SZ") if bid in found else now_s), "n": n}
+                if bid in qtodo:
+                    entry["q"] = qtodo[bid]
+                pending[str(bid)] = entry
             elif bid not in gave_up:
                 gave_up.append(bid)
-    for key, val in (("pending", pending), ("gave_up", gave_up)):
+    for key, val in (("pending", pending), ("gave_up", gave_up), ("qualified", registry)):
         if val:
             meta[key] = val
         else:
             meta.pop(key, None)
     write_meta(folder, meta, chunks)
-    log(f"added {len(added)} maps ({', '.join(f'{k} {v}' for k, v in mirror_use.items()) or 'no downloads'}); failed {len(skipped)} (pending {len(pending)}, gave up {len(gave_up)}); files touched: {len(touched)}; list_from now {meta.get('list_from')}")
-    for s in skipped[:20]:
-        log("  skipped", s)
+    n_q = sum(1 for b in added if b in qtodo)
+    log(f"added {len(added)} maps ({n_q} qualified, {len(added) - n_q} ranked/loved; via {', '.join(f'{k} {v}' for k, v in mirror_use.items()) or 'no downloads'}); failed {len(skipped)} (pending {len(pending)}, gave up {len(gave_up)}); files touched: {len(touched)}; list_from now {meta.get('list_from')}; tracking {len(registry)} qualified maps")
+    for s_ in skipped[:20]:
+        log("  skipped", s_)
 
 
 def rebuild(args, folder, meta, version, combos):
