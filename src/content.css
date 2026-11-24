@@ -804,3 +804,19 @@ html.omp-nocode .page-wrapper .content > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, 
 html.omp-nocode .page-wrapper .content > :is(h3, h4, h5, h6, p, ul, ol, table, aside, details, dl, form) { max-width: 920px; }
 html.omp-nocode #omp-tools.omp-tools-fixed { left: auto; right: 22px; }
 html.omp-nocode #omp-menu.omp-menu-left { left: auto; right: 10px; }
+
+/* one rating graph: the spread chart coloured as the user rating bar (orange up to 5, green above), counts under it */
+html.omp-on .beatmapset-stats__row--rating { display: flex; flex-direction: column; }
+html.omp-on .beatmapset-stats__rating-header + .bar--beatmap-rating,
+html.omp-on .beatmapset-stats__rating-values + .beatmapset-stats__rating-header { display: none; }
+html.omp-on .beatmapset-stats__rating-chart { order: 1; height: 30px; }
+html.omp-on .beatmapset-stats__rating-values { order: 2; padding-top: 3px; padding-bottom: 8px; font-size: .9em; }
+html.omp-on .beatmapset-stats__rating-chart .stacked-bar-chart__col:nth-child(-n+5) .stacked-bar-chart__entry { background-color: #eeaa00; }
+html.omp-on .beatmapset-stats__rating-chart .stacked-bar-chart__col:nth-child(n+6) .stacked-bar-chart__entry { background-color: #88b300; }
+html.omp-on .beatmapset-stats__rating-values span:first-child { color: #eeaa00; }
+html.omp-on .beatmapset-stats__rating-values span:last-child { color: #a5cf1a; }
+
+/* SS pp row: a soft strip so the label and the number read as one item */
+.omp-pp-row > * { background: color-mix(in srgb, currentColor 9%, transparent); padding-top: 3px; padding-bottom: 3px; }
+.omp-pp-row > th { padding-left: 8px; border-radius: 6px 0 0 6px; }
+.omp-pp-row > td { padding-right: 8px; border-radius: 0 6px 6px 0; font-weight: 700; }
