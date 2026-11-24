@@ -110,6 +110,7 @@
     } catch { return null; }
   }
   OMP.viewMap = () => { const sel = current(); return hovered(sel) || sel; };
+  OMP.selectedMap = () => current();
 
   // ---- put values in and take them out again ----
   function swap(el, text, on, attr) {
@@ -273,14 +274,12 @@
       }
       setVar(sr.querySelector('.bar--beatmap-success-rate'), '--fill', `${play ? pass / play * 100 : 0}%`, preview && play > 0);
     }
-    // the header badge always shows the selected difficulty
+    // the site's header badge and name follow the hovered difficulty too, so the badge gets that map's stars
     const badge = document.querySelector('.beatmapset-header__diff-name .difficulty-badge__rating');
-    if (badge && sel) {
-      const vs = view(sel, on ? combo : '');
-      const stSel = on ? starsOf(sel.id, i) : undefined;
-      const haveSel = vs.std && stSel !== undefined;
-      swap(badge, haveSel ? stSel.toFixed(2) : '', haveSel);
-      tint(badge.closest('.difficulty-badge'), haveSel ? stSel : null, haveSel, '--bg', true);
+    if (badge) {
+      const haveB = on && v.std && st !== undefined;
+      swap(badge, haveB ? st.toFixed(2) : '', haveB);
+      tint(badge.closest('.difficulty-badge'), haveB ? st : null, haveB, '--bg', true);
     }
     decoratePicker(on, i);
   }

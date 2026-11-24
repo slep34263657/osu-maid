@@ -151,7 +151,7 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
     const mine = document.querySelector('.omp-own');
     let n = null;
     if (on && head) {
-      const b = OMP.viewMap && OMP.viewMap();
+      const b = OMP.selectedMap && OMP.selectedMap(); // the total next to it is the site's, which does not change while hovering
       if (b && typeof b.current_user_playcount === 'number') n = b.current_user_playcount;
     }
     if (n === null) { if (mine) mine.remove(); return; }
@@ -180,6 +180,5 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(() => { try { decorate(); } catch (e) { console.error('[osu! minimal]', e); } }); } };
   new MutationObserver(schedule).observe(html, { childList: true, subtree: true });
   OMP.onSettings(schedule);
-  OMP.onHover(schedule);
   schedule();
 })();
