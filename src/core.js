@@ -113,15 +113,18 @@
     ...CFG.defaults, ...(s || {}),
     accentOn: s && s.accentOn !== undefined ? !!s.accentOn : !!(s && s.accent),
     docsTheme: s && s.docsDark === false && !s.docsTheme ? 'off' : (s && s.docsTheme) || CFG.defaults.docsTheme,
+    modView: s && s.modView !== undefined ? !!s.modView : !!(s && s.dtMode),
+    modCombo: (s && s.modCombo) || (s && s.dtOn ? 'DT' : ''),
     modIcons: s && s.modIcons === 'game' ? 'plain' : (s && s.modIcons) || CFG.defaults.modIcons,
     v: CFG.defaults.v,
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, dtMode: false, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, modView: false, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
-  OMP.rate = () => (eff().dtMode && settings.dtOn ? 1.5 : 1);
+  OMP.combo = () => (eff().modView ? settings.modCombo || '' : '');
+  OMP.rate = () => { const c = OMP.combo(); return /DT/.test(c) ? 1.5 : /HT/.test(c) ? 0.75 : 1; };
 
   const applyScale = (k) => {
     html.style.setProperty('--omp-k', String(k));
@@ -175,7 +178,7 @@
   function applySettings(prev) {
     applyScale(settings.scale);
     applyTheme();
-    if (!prev || prev.enabled !== settings.enabled || prev.dtMode !== settings.dtMode || prev.dtOn !== settings.dtOn) renderTools();
+    if (!prev || prev.enabled !== settings.enabled || prev.modView !== settings.modView || prev.modCombo !== settings.modCombo) renderTools();
     listeners.forEach((fn) => { try { fn(settings); } catch (e) { console.error('[osu! minimal]', e); } });
   }
 
@@ -276,7 +279,7 @@
           ${srow('accentLinks', 'Links')}
           ${srow('accentHighlights', 'Highlights')}
           ${srow('accentCharts', 'Charts')}</div>
-        ${srow('dtMode', 'DT mode (experimental)')}
+        ${srow('modView', 'Mod view (experimental)')}
         <div class="omp-mrow"><span><b>Text size</b></span>
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
       </div>
@@ -334,6 +337,27 @@
     setGear(true);
   }
 
+  function openCombos(e) {
+    e.stopPropagation();
+    const old = document.getElementById('omp-combos');
+    if (old) { old.remove(); return; }
+    const box = document.createElement('div');
+    box.id = 'omp-combos';
+    const btn = e.currentTarget.getBoundingClientRect();
+    box.style.top = `${Math.round(btn.bottom) + 6}px`;
+    box.style.right = `${Math.max(8, Math.round(innerWidth - btn.right))}px`;
+    box.innerHTML = ['', ...(OMP.modCombos || [])].map((c) => `<button type="button" data-combo="${c}"${(settings.modCombo || '') === c ? ' aria-pressed="true"' : ''}>${c || 'Off'}</button>`).join('');
+    box.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const b = ev.target.closest('[data-combo]');
+      if (!b) return;
+      OMP.set({ modCombo: b.dataset.combo });
+      box.remove();
+    });
+    html.append(box);
+    document.addEventListener('click', () => box.remove(), { once: true });
+  }
+
   function renderTools() {
     document.getElementById('omp-tools')?.remove();
     const nav = document.querySelector('.nav2-header .nav2');
@@ -342,7 +366,7 @@
     const on = settings.enabled;
     const tools = document.createElement('div');
     tools.id = 'omp-tools';
-    const dt = on && settings.dtMode ? `<button class="omp-icon-btn" id="omp-dt" title="DT mode (experimental)" aria-label="DT mode" aria-pressed="${!!settings.dtOn}">DT</button>` : '';
+    const dt = on && settings.modView ? `<button class="omp-icon-btn omp-modbtn" id="omp-dt" title="Mod view (experimental)" aria-label="Mod view" aria-pressed="${!!settings.modCombo}">${settings.modCombo || 'Mods'}</button>` : '';
     tools.innerHTML = `${dt}${on ? `<button class="omp-icon-btn" id="omp-gear" title="osu! maid settings" aria-label="osu! maid settings" aria-pressed="false">${ICON_GEAR}</button>` : ''}
       <button class="omp-icon-btn" id="omp-power" title="${on ? 'Turn osu! maid off' : 'Turn osu! maid on'}" aria-label="osu! maid" aria-pressed="${on}">${ICON_POWER}</button>`;
     if (floating) { tools.classList.add('omp-tools-fixed'); html.append(tools); } else {
@@ -351,7 +375,7 @@
     }
     tools.querySelector('#omp-power').addEventListener('click', () => OMP.set({ enabled: !settings.enabled }));
     if (on) tools.querySelector('#omp-gear').addEventListener('click', onGear);
-    if (dt) tools.querySelector('#omp-dt').addEventListener('click', () => OMP.set({ dtOn: !settings.dtOn }));
+    if (dt) tools.querySelector('#omp-dt').addEventListener('click', openCombos);
   }
 
   OMP.start = () => {

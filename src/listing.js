@@ -102,7 +102,7 @@
         item.dataset.id = String(id);
         item.dataset.rate = String(rate);
         const bpm = rate === 1 ? fmtBpm(meta.bpm) : String(Math.round(meta.bpm * rate));
-        item.title = `BPM: ${bpm}${rate === 1 ? '' : ' (DT)'}`;
+        item.title = `BPM: ${bpm}${OMP.combo() ? ` (${OMP.combo()})` : ''}`;
         item.lastElementChild.textContent = `${bpm} BPM`;
       }
     });

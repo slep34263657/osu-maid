@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- DT star rating calculator. The osu! package version below is the pin: mod-stars/meta.json must record the same version. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <OsuVersion>2026.702.1</OsuVersion>
+    <AssemblyName>mod-stats-calc</AssemblyName>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ppy.osu.Game" Version="$(OsuVersion)" />
+    <PackageReference Include="ppy.osu.Game.Rulesets.Osu" Version="$(OsuVersion)" />
+  </ItemGroup>
+</Project>

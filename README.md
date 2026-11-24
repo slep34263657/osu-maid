@@ -29,7 +29,7 @@ userscript for osu.ppy.sh ♡
 - remembered listing mode
 - modding page opens on total
 - account settings search
-- DT mode button (experimental)
+- mod view button (experimental): stats, stars and SS pp for a mod combo
 - clearer fail chart on beatmap pages
 - your own play count on beatmap pages
 - search-in buttons on the beatmap listing

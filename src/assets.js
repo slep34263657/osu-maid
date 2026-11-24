@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const HOSTS = new Set(['assets.ppy.sh', 'a.ppy.sh', 'raw.githubusercontent.com']);
+  const HOSTS = new Set(['assets.ppy.sh', 'a.ppy.sh', 'raw.githubusercontent.com', 'cdn.jsdelivr.net']);
 
   OMP.text = (url) => new Promise((resolve) => {
     let u;

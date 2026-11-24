@@ -779,3 +779,11 @@ html.omp-acc-btn .btn-circle:hover, html.omp-acc-btn .btn-circle:focus-visible {
 #omp-menu.omp-peek { opacity: .1; transition: opacity .15s; pointer-events: none; }
 
 .omp-own { margin-left: .15em; opacity: .7; font-weight: 400; }
+
+/* mod view: combo list under the header button, SS pp row */
+#omp-tools .omp-modbtn { width: auto; min-width: 2em; padding: 0 .55em; font-size: .8em; letter-spacing: .02em; }
+#omp-combos { position: fixed; z-index: 3000; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 15em; padding: 8px; background: var(--surface, #17171a); border: 1px solid var(--border, #2a2a2e); border-radius: 10px; box-shadow: 0 8px 28px rgba(0, 0, 0, .55); font-family: "Segoe UI", system-ui, sans-serif; font-size: 13px; }
+#omp-combos button { padding: .45em 0; background: var(--hover, #222226); border: 0; border-radius: 6px; color: var(--dim, #a1a1a6); font: inherit; cursor: pointer; transition: background .1s, color .1s; }
+#omp-combos button:hover { color: var(--text, #e8e8ea); }
+#omp-combos button[aria-pressed="true"] { background: var(--omp-accent, var(--text, #e8e8ea)); color: var(--bg, #0e0e10); font-weight: 600; }
+.omp-pp-row .beatmap-stats-table__label { white-space: nowrap; }

@@ -1,0 +1,51 @@
+name: Update mod stats
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+    inputs:
+      max_maps:
+        description: "Maximum new maps to process in this run"
+        default: "2000"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-mod-stats
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build calculator
+        run: dotnet build tools/mod-stats/calc -c Release -o "$RUNNER_TEMP/mod-stats-calc" --nologo -v q
+
+      - name: Update mod-stars
+        run: |
+          python3 tools/mod-stats/update_mod_stats.py \
+            --tool "dotnet $RUNNER_TEMP/mod-stats-calc/mod-stats-calc.dll" \
+            --max-maps "${{ github.event.inputs.max_maps || '2000' }}" \
+            || { code=$?; echo "::error::mod-stars update failed (exit $code). 2 = every mirror failed to list, 3 = calculator version differs from mod-stars/meta.json. See tools/mod-stats/README.md."; exit $code; }
+
+      - name: Commit changes
+        run: |
+          git add mod-stars mod-pp
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update mod stats"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
