@@ -191,19 +191,20 @@
         else if (label === 'Approach Rate') set(v.ar);
         else if (label === 'Star Rating' && v.std) { starRow = r; swap(value, have ? st.toFixed(2) : '', have); fill(bar, have ? st : 0, have); }
       });
-      // the SS pp row, right under the star rating
+      // the SS pp line, right under the star rating; it is there before the number arrives, so nothing moves when it does
       let row = root.querySelector('.omp-pp-row');
-      if (!starRow || ppv === undefined) { if (row) row.remove(); } else {
+      if (!on || !v.std || !starRow) { if (row) row.remove(); } else {
         if (!row || row.previousElementSibling !== starRow) {
           if (row) row.remove();
           row = document.createElement('tr');
           row.className = 'omp-pp-row';
-          row.innerHTML = '<th class="beatmap-stats-table__label">SS pp</th><td class="beatmap-stats-table__value" colspan="2"></td>';
+          row.innerHTML = '<td colspan="3"></td>';
           starRow.after(row);
         }
-        const cell = row.lastElementChild;
-        const text = ppv.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        const cell = row.firstElementChild;
+        const text = ppv === undefined ? 'SS: –' : `SS: ${ppv.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}pp`;
         if (cell.textContent !== text) cell.textContent = text;
+        cell.classList.toggle('omp-pending', ppv === undefined);
       }
     }
     const badge = document.querySelector('.beatmapset-header__diff-name .difficulty-badge__rating');

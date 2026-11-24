@@ -786,9 +786,7 @@ html.omp-acc-btn .btn-circle:hover, html.omp-acc-btn .btn-circle:focus-visible {
 #omp-combos button { padding: .45em 0; background: var(--hover, #222226); border: 0; border-radius: 6px; color: var(--dim, #a1a1a6); font: inherit; cursor: pointer; transition: background .1s, color .1s; }
 #omp-combos button:hover { color: var(--text, #e8e8ea); }
 #omp-combos button[aria-pressed="true"] { background: var(--omp-accent, var(--text, #e8e8ea)); color: var(--bg, #0e0e10); font-weight: 600; }
-.omp-pp-row .beatmap-stats-table__label { white-space: nowrap; }
 
-.omp-pp-row .beatmap-stats-table__value { text-align: right; }
 html.omp-on .beatmapset-stats__rating-chart { height: 14px; }
 html.omp-on .beatmapset-stats__row--rating { padding-top: 8px; }
 html.omp-on .beatmapset-stats__rating-header { padding-bottom: 3px; }
@@ -816,7 +814,6 @@ html.omp-on .beatmapset-stats__rating-chart .stacked-bar-chart__col:nth-child(n+
 html.omp-on .beatmapset-stats__rating-values span:first-child { color: #eeaa00; }
 html.omp-on .beatmapset-stats__rating-values span:last-child { color: #a5cf1a; }
 
-/* SS pp row: a soft strip so the label and the number read as one item */
-.omp-pp-row > * { background: color-mix(in srgb, currentColor 9%, transparent); padding-top: 3px; padding-bottom: 3px; }
-.omp-pp-row > th { padding-left: 8px; border-radius: 6px 0 0 6px; }
-.omp-pp-row > td { padding-right: 8px; border-radius: 0 6px 6px 0; font-weight: 700; }
+/* SS pp line: one soft strip, centred */
+.omp-pp-row > td { padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, currentColor 9%, transparent); text-align: center; font-weight: 600; }
+.omp-pp-row > td.omp-pending { opacity: .55; font-weight: 400; }
