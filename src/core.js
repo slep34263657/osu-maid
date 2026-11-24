@@ -118,7 +118,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, failChart: false, dtMode: false, accentOn: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, failChart: false, dtMode: false, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.rate = () => (eff().dtMode && settings.dtOn ? 1.5 : 1);
@@ -144,9 +144,14 @@
       const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
       html.style.setProperty('--omp-ink', 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#000' : '#fff');
       html.classList.add('omp-accent');
+      const e = eff();
+      html.classList.toggle('omp-acc-btn', e.accentButtons);
+      html.classList.toggle('omp-acc-links', e.accentLinks);
+      html.classList.toggle('omp-acc-hl', e.accentHighlights);
+      html.classList.toggle('omp-acc-chart', e.accentCharts);
     } else {
       ['--omp-hue', '--omp-accent', '--omp-ink'].forEach((p) => html.style.removeProperty(p));
-      html.classList.remove('omp-accent');
+      html.classList.remove('omp-accent', 'omp-acc-btn', 'omp-acc-links', 'omp-acc-hl', 'omp-acc-chart');
     }
   };
 
@@ -264,7 +269,11 @@
         ${srow('theme', 'Dark theme', 'Dark colours and a compact header')}
         <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black', 'Black instead of dark grey')}</div>
         ${srow('accentOn', 'Accent colour', 'Tints links, buttons and highlights')}
-        <div class="omp-msub${settings.accentOn ? '' : ' omp-off'}"><div class="omp-mrow"><span><b>Colour</b></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour"></span></div></div>
+        <div class="omp-msub${settings.accentOn ? '' : ' omp-off'}"><div class="omp-mrow"><span><b>Colour</b></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour"></span></div>
+          ${srow('accentButtons', 'Buttons', 'Circle buttons and pink buttons')}
+          ${srow('accentLinks', 'Links and text', 'Links, tabs and stat values')}
+          ${srow('accentHighlights', 'Highlights', 'Underlines, rings and active states')}
+          ${srow('accentCharts', 'Charts', 'Fail chart colours')}</div>
         ${srow('dtMode', 'DT everywhere (experimental)', 'Adds a DT button in the header: BPM, length, AR, OD and stars as with DT. Stars: osu!standard ranked maps only')}
         <div class="omp-mrow"><span><b>Text size</b><small>Header and this menu</small></span>
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
