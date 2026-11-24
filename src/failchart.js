@@ -31,7 +31,7 @@
     const passed = b.passcount || 0;
     const events = passed + sf + sq;
 
-    const W = 300, H = 112, top = 4, base = 92, bw = W / n;
+    const W = 300, H = 108, top = 4, base = 92, bw = W / n;
     let bars = '';
     for (let i = 0; i < n; i++) {
       const hq = (q[i] / max) * (base - top);
@@ -46,7 +46,7 @@
     const ticks = [0, 25, 50, 75, 100].map((t) => {
       const x = (t / 100) * W;
       const anchor = t === 0 ? 'start' : t === 100 ? 'end' : 'middle';
-      return `<line class="omp-fc-tick" x1="${x}" x2="${x}" y1="${base}" y2="${base + 4}"/><text class="omp-fc-lbl" x="${x}" y="${base + 14}" text-anchor="${anchor}">${t}%</text>`;
+      return `<line class="omp-fc-tick" x1="${x}" x2="${x}" y1="${base}" y2="${base + 4}"/><text class="omp-fc-lbl" x="${x}" y="${base + 14}" text-anchor="${anchor}">${t === 100 ? '100% of map' : `${t}%`}</text>`;
     }).join('');
 
     // where half of the quits / fails happen
@@ -64,14 +64,13 @@
         <span><i class="omp-fc-failbar"></i>Failed ${pct(sf, events)}</span>
         <span><i class="omp-fc-quitbar"></i>Quit ${pct(sq, events)}</span>
       </div>
-      <svg class="omp-fc-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Where players fail or quit, by map progress">
+      <svg class="omp-fc-svg" data-facts="${facts}${facts ? ' · ' : ''}tallest bar ${num(max)} players" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Where players fail or quit, by map progress">
         <line class="omp-fc-grid" x1="0" x2="${W}" y1="${top}" y2="${top}"/>
         <line class="omp-fc-grid" x1="0" x2="${W}" y1="${(top + base) / 2}" y2="${(top + base) / 2}"/>
         <line class="omp-fc-axis" x1="0" x2="${W}" y1="${base}" y2="${base}"/>
         ${bars}${ticks}
       </svg>
-      <div class="omp-fc-axis-title"><span>Map progress</span><span>tallest bar: ${num(max)} players</span></div>
-      <div class="omp-fc-note">${facts}</div>`;
+`;
   }
 
   function decorate() {
@@ -89,7 +88,9 @@
     const el = document.createElement('div');
     el.className = 'omp-fc';
     el.dataset.id = String(b.id);
+    el.title = el.dataset.facts || '';
     el.innerHTML = build(b);
+    el.title = el.querySelector('svg').dataset.facts;
     orig.after(el);
   }
 

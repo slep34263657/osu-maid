@@ -748,7 +748,7 @@ html.omp-accent body :is([class*="supporter"], [class*="supporter"] *) {
 .omp-fc-quitbar { background: #f5b042; }
 .omp-fc-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px; margin-bottom: 4px; }
 .omp-fc-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
-.omp-fc-svg { display: block; width: 100%; height: 96px; overflow: visible; }
+.omp-fc-svg { display: block; width: 100%; height: 92px; overflow: visible; }
 .omp-fc-fail { fill: #ff6b6b; }
 .omp-fc-quit { fill: #f5b042; }
 .omp-fc-hit { fill: currentColor; fill-opacity: 0; }
@@ -756,6 +756,6 @@ html.omp-accent body :is([class*="supporter"], [class*="supporter"] *) {
 .omp-fc-grid { stroke: currentColor; stroke-opacity: .14; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
 .omp-fc-axis, .omp-fc-tick { stroke: currentColor; stroke-opacity: .5; vector-effect: non-scaling-stroke; }
 .omp-fc-lbl { fill: currentColor; fill-opacity: .75; font-size: 9px; }
-.omp-fc-axis-title { display: flex; justify-content: space-between; margin-top: 2px; opacity: .7; font-size: 11px; }
-.omp-fc-note { margin-top: 4px; text-align: center; opacity: .8; font-size: 11px; }
-.omp-fc-note:empty { display: none; }
+html.omp-accent .omp-fc-pass { background: color-mix(in srgb, currentColor 55%, transparent); }
+html.omp-accent .omp-fc-failbar, html.omp-accent .omp-fc-fail { background: var(--omp-accent); fill: var(--omp-accent); }
+html.omp-accent .omp-fc-quitbar, html.omp-accent .omp-fc-quit { background: color-mix(in srgb, var(--omp-accent) 50%, #fff); fill: color-mix(in srgb, var(--omp-accent) 50%, #fff); }
