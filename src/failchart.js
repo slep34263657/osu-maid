@@ -31,7 +31,7 @@
     const passed = b.passcount || 0;
     const events = passed + sf + sq;
 
-    const W = 300, H = 96, top = 4, base = 92, bw = W / n;
+    const W = 300, H = 100, top = 4, base = 98, bw = W / n;
     let bars = '';
     for (let i = 0; i < n; i++) {
       const hq = (q[i] / max) * (base - top);
