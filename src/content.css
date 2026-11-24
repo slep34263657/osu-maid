@@ -194,7 +194,6 @@ html.omp-list-outlines .beatmapset-panel[style*="--omp-status"]::after {
 .omp-mrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: .35em 0; cursor: pointer; }
 .omp-mrow > span { min-width: 0; display: flex; flex-direction: column; }
 .omp-mrow b { font-weight: 500; }
-.omp-mrow small { color: var(--dim); font-size: .85em; }
 .omp-sw {
   appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 2.4em; height: 1.4em; margin: 0; cursor: pointer;
   background: var(--hover); border: 1px solid var(--border); border-radius: 1em; transition: background .15s, border-color .15s;
@@ -669,7 +668,6 @@ html.omp-theme .beatmapsets-search__cover::after { background-color: rgba(0, 0, 
 
 .omp-mhead { position: relative; display: flex; align-items: center; justify-content: space-between; min-height: 5.2em; margin: -.1em 0 .1em; }
 .omp-mhead .omp-mtitle { margin: 0; font-size: 1.25em; }
-.omp-msub-title { margin-top: .1em; font-size: .85em; color: var(--dim); }
 .omp-mlogo { flex: none; align-self: flex-end; width: 5.4em; height: 5.2em; margin: 0 -.3em -.1em 0; background: url("__OMP_MASCOT__") center bottom / contain no-repeat; }
 
 /* hide the medals you have not unlocked */

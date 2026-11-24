@@ -202,50 +202,50 @@
   const ICON_POWER = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><path d="M12 2v10"/></svg>';
 
   let menuEl = null;
-  const mrow = (attrs, label, hint, on) => `<label class="omp-mrow"><span><b>${esc(label)}</b>${hint ? `<small>${esc(hint)}</small>` : ''}</span><input type="checkbox" class="omp-sw" ${attrs}${on ? ' checked' : ''}></label>`;
-  const srow = (key, label, hint) => mrow(`data-set="${key}"`, label, hint, settings[key]);
+  const mrow = (attrs, label, on) => `<label class="omp-mrow"><span><b>${esc(label)}</b></span><input type="checkbox" class="omp-sw" ${attrs}${on ? ' checked' : ''}></label>`;
+  const srow = (key, label) => mrow(`data-set="${key}"`, label, settings[key]);
 
   const GROUPS = [
     { id: 'profile', label: 'Profile', match: (p) => /^\/users\//.test(p), rows: [
-      ['playArt', 'Map art on scores', 'The beatmap cover behind each score card'],
-      ['lazerboard', 'Lazerboard stats', 'Leaderboard ranks; asks lazerboard.melguy.com (sends the player id)'],
-      ['lbSide', 'Pop stats out', 'Beside the profile on wide windows, not under the stats', 'lazerboard'],
-      ['statusColour', 'Online status colour', 'Green when online, red when offline'],
-      ['scoreRank', 'Score rank', 'Asks score.respektive.pw (sends the player id)'],
-      ['medalLink', 'Osekai link on medals', 'A link to the medal on Osekai in its popup'],
-      ['hideLocked', 'Hide unachieved medals', 'Only the medals you have; also a switch in the medals header'],
+      ['playArt', 'Map art on scores'],
+      ['lazerboard', 'Lazerboard stats'],
+      ['lbSide', 'Pop out', 'lazerboard'],
+      ['statusColour', 'Status colour'],
+      ['scoreRank', 'Score rank'],
+      ['medalLink', 'Osekai medal link'],
+      ['hideLocked', 'Hide locked medals'],
     ] },
     { id: 'scores', label: 'Scores', match: (p) => /^\/(users|scores)\//.test(p) || /^\/beatmapsets\/\d+/.test(p), rows: [
-      ['playHours', 'Play time in hours', 'Hours shown, days and hours on hover'],
-      ['ppDecimals', 'pp to 2 decimals', 'Instead of rounded pp (on profiles)'],
-      ['modIcons', 'Mod icons', '', [['site', 'Site'], ['letters', 'Letters'], ['plain', 'Plain']]],
+      ['playHours', 'Play time in hours'],
+      ['ppDecimals', 'pp decimals'],
+      ['modIcons', 'Mod icons', [['site', 'Site'], ['letters', 'Letters'], ['plain', 'Plain']]],
     ] },
     { id: 'score', label: 'Score page', match: (p) => /^\/scores\//.test(p), rows: [
-      ['scoreLayout', 'Results screen layout', 'Laid out like the in-game results screen'],
-      ['scoreImage', 'Score buttons', 'Icon buttons: download replay, copy link, save as image'],
+      ['scoreLayout', 'Results layout'],
+      ['scoreImage', 'Score buttons'],
     ] },
     { id: 'beatmap', label: 'Beatmap page', match: (p) => /^\/beatmapsets\/\d+\/?$/.test(p), rows: [
-      ['bgPass', 'Map background', 'Shows through the header and info area'],
-      ['bgButton', 'Background button', 'Opens the full-size background image'],
-      ['compactDl', 'Slim download buttons', 'Icon only, no "with video" button'],
-      ['failChart', 'Clearer fail chart', 'Pass, fail and quit split, labelled axis and per-bar tooltips'],
-      ['copyDesc', 'Copy description', 'A small icon next to "Description"'],
-      ['copyInfo', 'Copy map info button', 'A header button that copies artist, title, mapper and link'],
+      ['bgPass', 'Map background'],
+      ['bgButton', 'Background button'],
+      ['compactDl', 'Slim downloads'],
+      ['failChart', 'Fail chart'],
+      ['copyDesc', 'Copy description'],
+      ['copyInfo', 'Copy map info'],
     ] },
     { id: 'modding', label: 'Modding', match: (p) => /^\/beatmapsets\/\d+\/discussion/.test(p), rows: [
-      ['modTotal', 'Open on Total', 'Show all discussions, not only praise'],
+      ['modTotal', 'Open on Total'],
     ] },
     { id: 'listing', label: 'Beatmap listing', match: (p) => /^\/beatmapsets\/?$/.test(p), rows: [
-      ['listBpm', 'BPM on cards', 'Shown on every card'],
-      ['listOutlines', 'Status outlines', 'Card outline in the colour of its status'],
-      ['listTitles', 'Other title and artist', 'The romanised / original name next to the main one'],
-      ['listMode', 'Remember mode', 'Reopen the listing in the last game mode'],
+      ['listBpm', 'BPM'],
+      ['listOutlines', 'Status outlines'],
+      ['listTitles', 'Other title and artist'],
+      ['listMode', 'Remember mode'],
     ] },
     { id: 'docs', label: 'API docs', match: (p) => /^\/docs/.test(p), rows: [
-      ['docsTheme', 'Dark docs', '', [['off', 'Off'], ['grey', 'Grey'], ['black', 'Black']]],
+      ['docsTheme', 'Dark docs', [['off', 'Off'], ['grey', 'Grey'], ['black', 'Black']]],
     ] },
     { id: 'account', label: 'Account settings', match: (p) => /^\/home\/account\/edit/.test(p), rows: [
-      ['accountSearch', 'Search box', 'Filter the settings by typing; press / to jump to it'],
+      ['accountSearch', 'Search box'],
     ] },
   ];
   const openGroups = new Set();
@@ -253,29 +253,29 @@
   function buildMenu() {
     const path = location.pathname;
     const choice = (key, label, opts) => `<div class="omp-mrow"><span><b>${esc(label)}</b></span><span class="omp-seg">${opts.map(([v, t]) => `<button type="button" data-key="${key}" data-choice="${v}"${settings[key] === v ? ' aria-pressed="true"' : ''}>${esc(t)}</button>`).join('')}</span></div>`;
-    const rows = (g) => g.rows.map(([key, label, hint, parent]) => (Array.isArray(parent)
-      ? choice(key, label, parent)
-      : parent
-      ? `<div class="omp-msub${settings[parent] ? '' : ' omp-off'}">${srow(key, label, hint)}</div>`
-      : srow(key, label, hint))).join('');
+    const rows = (g) => g.rows.map(([key, label, extra]) => (Array.isArray(extra)
+      ? choice(key, label, extra)
+      : extra
+      ? `<div class="omp-msub${settings[extra] ? '' : ' omp-off'}">${srow(key, label)}</div>`
+      : srow(key, label))).join('');
     const here = GROUPS.filter((g) => g.match(path));
     const other = GROUPS.filter((g) => !g.match(path));
     const group = (g) => `<details class="omp-mgroup" data-g="${g.id}"${openGroups.has(g.id) ? ' open' : ''}><summary>${esc(g.label)}</summary>${rows(g)}</details>`;
     menuEl.innerHTML = `
-      <div class="omp-mhead"><div><div class="omp-mtitle">osu! maid</div><div class="omp-msub-title">Settings for this site</div></div><i class="omp-mlogo" aria-hidden="true"></i></div>
+      <div class="omp-mhead"><div><div class="omp-mtitle">osu! maid</div></div><i class="omp-mlogo" aria-hidden="true"></i></div>
       ${here.length ? `<h3>On this page</h3>${here.map((g) => `<div class="omp-mblock"><div class="omp-mname">${esc(g.label)}</div>${rows(g)}</div>`).join('')}` : ''}
       <h3>Everywhere</h3>
       <div class="omp-mblock">
-        ${srow('theme', 'Dark theme', 'Dark colours and a compact header')}
-        <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black', 'Black instead of dark grey')}</div>
-        ${srow('accentOn', 'Accent colour', 'Tints links, buttons and highlights')}
+        ${srow('theme', 'Dark theme')}
+        <div class="omp-msub${settings.theme ? '' : ' omp-off'}">${srow('black', 'Pure black')}</div>
+        ${srow('accentOn', 'Accent colour')}
         <div class="omp-msub"${settings.accentOn ? '' : ' hidden'}><div class="omp-mrow"><span><b>Colour</b></span><span class="omp-acc"><input type="color" data-accent value="${/^#[0-9a-f]{6}$/i.test(settings.accent || '') ? settings.accent : '#ff66aa'}" aria-label="Accent colour"></span></div>
-          ${srow('accentButtons', 'Buttons', 'Circle buttons and pink buttons')}
-          ${srow('accentLinks', 'Links and text', 'Links, tabs and stat values')}
-          ${srow('accentHighlights', 'Highlights', 'Underlines, rings and active states')}
-          ${srow('accentCharts', 'Charts', 'Fail chart colours')}</div>
-        ${srow('dtMode', 'DT everywhere (experimental)', 'Adds a DT button in the header: BPM, length, AR, OD and stars as with DT. Stars: osu!standard ranked maps only')}
-        <div class="omp-mrow"><span><b>Text size</b><small>Header and this menu</small></span>
+          ${srow('accentButtons', 'Buttons')}
+          ${srow('accentLinks', 'Links')}
+          ${srow('accentHighlights', 'Highlights')}
+          ${srow('accentCharts', 'Charts')}</div>
+        ${srow('dtMode', 'DT mode (experimental)')}
+        <div class="omp-mrow"><span><b>Text size</b></span>
           <span class="omp-step"><button type="button" data-step="-1" aria-label="Smaller text">-</button><output>${settings.scale}</output><button type="button" data-step="1" aria-label="Larger text">+</button></span></div>
       </div>
       <h3>${here.length ? 'Other pages' : 'Pages'}</h3>
