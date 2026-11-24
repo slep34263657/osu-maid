@@ -31,6 +31,8 @@ userscript for osu.ppy.sh ♡
 - account settings search
 - DT mode button (experimental)
 - clearer fail chart on beatmap pages
+- your own play count on beatmap pages
+- search-in buttons on the beatmap listing
 
 </td>
 </tr>

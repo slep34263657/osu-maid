@@ -31,6 +31,8 @@ globalThis.OMP_CONFIG = {
     accentCharts: true,
     accent: '',
     failChart: true,
+    searchIn: false,
+    ownPlays: true,
     dtMode: false,
     dtOn: false,
     scoreLayout: true,

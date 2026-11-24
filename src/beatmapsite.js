@@ -144,6 +144,30 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
     });
   }
 
+  // "770,054 [3]": the viewer's own plays of the selected difficulty, after the total
+  function ownPlays(id, on) {
+    const head = document.querySelector('.beatmapset-header__value[title="Playcount"]');
+    const mine = document.querySelector('.omp-own');
+    let n = null;
+    if (on && head) {
+      try {
+        const set = JSON.parse(document.getElementById('json-beatmapset').textContent);
+        const h = location.hash.match(/#\w+\/(\d+)/);
+        const b = String(set.id) === id && h && (set.beatmaps || []).find((x) => String(x.id) === h[1]);
+        if (b && typeof b.current_user_playcount === 'number') n = b.current_user_playcount;
+      } catch { /* no data yet */ }
+    }
+    if (n === null) { if (mine) mine.remove(); return; }
+    const text = ` [${n.toLocaleString('en-US')}]`;
+    if (mine && mine.parentElement === head) { if (mine.textContent !== text) mine.textContent = text; return; }
+    if (mine) mine.remove();
+    const s = document.createElement('span');
+    s.className = 'omp-own';
+    s.title = 'Your plays on this difficulty';
+    s.textContent = text;
+    head.append(s);
+  }
+
   function decorate() {
     queued = false;
     const id = (location.pathname.match(BEATMAPSET) || [])[1];
@@ -152,6 +176,7 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
     background(id, active && c.bgPass);
     infoButton(id, active && c.copyInfo);
     descButton(id, active && c.copyDesc);
+    ownPlays(id, active && c.ownPlays);
     bgButton(id, active && c.bgButton);
     if (active) downloads(c.compactDl); else html.classList.remove('omp-compact-dl');
   }

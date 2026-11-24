@@ -118,7 +118,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, failChart: false, dtMode: false, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, dtMode: false, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.rate = () => (eff().dtMode && settings.dtOn ? 1.5 : 1);
@@ -231,6 +231,7 @@
       ['failChart', 'Fail chart'],
       ['copyDesc', 'Copy description'],
       ['copyInfo', 'Copy map info'],
+      ['ownPlays', 'Own play count'],
     ] },
     { id: 'modding', label: 'Modding', match: (p) => /^\/beatmapsets\/\d+\/discussion/.test(p), rows: [
       ['modTotal', 'Open on Total'],
@@ -240,6 +241,7 @@
       ['listOutlines', 'Status outlines'],
       ['listTitles', 'Other title and artist'],
       ['listMode', 'Remember mode'],
+      ['searchIn', 'Search in buttons'],
     ] },
     { id: 'docs', label: 'API docs', match: (p) => /^\/docs/.test(p), rows: [
       ['docsTheme', 'Dark docs', [['off', 'Off'], ['grey', 'Grey'], ['black', 'Black']]],

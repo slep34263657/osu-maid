@@ -777,3 +777,5 @@ html.omp-acc-chart .omp-fc-quitbar, html.omp-acc-chart .omp-fc-quit { background
 html.omp-acc-btn .btn-circle { background-color: hsl(var(--hsl-b2)); color: var(--omp-accent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--omp-accent) 65%, transparent); transition: background-color .15s, color .15s, box-shadow .15s; }
 html.omp-acc-btn .btn-circle:hover, html.omp-acc-btn .btn-circle:focus-visible { background-color: var(--omp-accent) !important; color: var(--omp-ink, #000) !important; box-shadow: inset 0 0 0 1.5px var(--omp-accent) !important; }
 #omp-menu.omp-peek { opacity: .1; transition: opacity .15s; pointer-events: none; }
+
+.omp-own { margin-left: .15em; opacity: .7; font-weight: 400; }
