@@ -773,5 +773,5 @@ html.omp-accent .omp-fc-quitbar, html.omp-accent .omp-fc-quit { background: colo
 
 .profile-links__item[data-omp-status="online"] { color: #8fd19e; }
 .profile-links__item[data-omp-status="offline"] { color: #e58b8b; }
-html.omp-accent .btn-circle { background-color: color-mix(in srgb, var(--omp-accent) 30%, hsl(var(--hsl-b2))); }
-html.omp-accent .btn-circle:hover { background-color: color-mix(in srgb, var(--omp-accent) 50%, hsl(var(--hsl-b2))); }
+html.omp-accent .btn-circle { background-color: var(--omp-accent); color: var(--omp-ink, #fff); }
+html.omp-accent .btn-circle:hover { background-color: color-mix(in srgb, var(--omp-accent) 82%, #fff); }

@@ -140,9 +140,11 @@
       const h = String(hueOf(hex));
       html.style.setProperty('--omp-hue', h);
       html.style.setProperty('--omp-accent', hex);
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+      html.style.setProperty('--omp-ink', 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#000' : '#fff');
       html.classList.add('omp-accent');
     } else {
-      ['--omp-hue', '--omp-accent'].forEach((p) => html.style.removeProperty(p));
+      ['--omp-hue', '--omp-accent', '--omp-ink'].forEach((p) => html.style.removeProperty(p));
       html.classList.remove('omp-accent');
     }
   };
