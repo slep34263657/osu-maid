@@ -13,6 +13,7 @@
   const stars = new Map();
   const pp = new Map();
   const asked = new Set();
+  const loaded = new Set();
   const setMaps = new Map();
   OMP.onSearch((list) => list.forEach((s) => { if (s.maps) setMaps.set(s.id, s.maps); }));
   let queued = false;
@@ -65,6 +66,7 @@
     const target = kind === 's' ? stars : pp;
     meta().then(() => cached(`mod-${kind === 's' ? 'stars' : 'pp'}/${n}.json`)).then((text) => {
       try { Object.entries(JSON.parse(text)).forEach(([k, v]) => target.set(k, v)); } catch { /* no data for this range */ }
+      loaded.add(key);
       schedule();
     });
   }
@@ -237,9 +239,21 @@
       const byMode = {};
       [...maps].sort((x, y) => x.r - y.r).forEach((m) => { (byMode[m.mode] = byMode[m.mode] || []).push(m); });
       const modeOf = (icon) => ({ 'osu!': 'osu', 'osu!taiko': 'taiko', 'osu!catch': 'fruits', 'osu!mania': 'mania' }[icon.title]);
+      const dots = card.querySelector('.beatmapset-panel__extra-item--dots');
+      const std = byMode.osu || [];
+      const missing = on && dots && std.length && std.every((m) => loaded.has(`s${Math.floor(m.id / 1000)}`)) && std.some((m) => !stars.has(String(m.id)));
+      let note = dots && dots.querySelector('.omp-new');
+      if (!missing) { if (note) note.remove(); } else if (!note) {
+        note = document.createElement('span');
+        note.className = 'omp-new';
+        note.title = 'Not in the mod database yet. New maps are added about once a day.';
+        note.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+        dots.append(note);
+      }
       let mode = null;
       let n = 0;
       card.querySelectorAll('.beatmapset-panel__extra-item--dots > *').forEach((el) => {
+        if (el.classList.contains('omp-new')) return;
         if (el.classList.contains('beatmapset-panel__beatmap-icon')) { mode = modeOf(el); n = 0; return; }
         const m = mode && (byMode[mode] || [])[n++];
         if (!m) return;
