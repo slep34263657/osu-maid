@@ -146,7 +146,8 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
 
   // "770,054 [3]": the viewer's own plays of the selected difficulty, after the total
   function ownPlays(id, on) {
-    const head = document.querySelector('.beatmapset-header__value[title="Playcount"]');
+    const icon = document.querySelector('.beatmapset-header__value .fa-play-circle');
+    const head = icon && icon.closest('.beatmapset-header__value');
     const mine = document.querySelector('.omp-own');
     let n = null;
     if (on && head) {
@@ -163,7 +164,6 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
     if (mine) mine.remove();
     const s = document.createElement('span');
     s.className = 'omp-own';
-    s.title = 'Your plays on this difficulty';
     s.textContent = text;
     head.append(s);
   }
