@@ -814,6 +814,6 @@ html.omp-on .beatmapset-stats__rating-chart .stacked-bar-chart__col:nth-child(n+
 html.omp-on .beatmapset-stats__rating-values span:first-child { color: #eeaa00; }
 html.omp-on .beatmapset-stats__rating-values span:last-child { color: #a5cf1a; }
 
-/* SS pp line: one soft strip, centred */
-.omp-pp-row > td { padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, currentColor 9%, transparent); text-align: center; font-weight: 600; }
+/* SS pp line, centred */
+.omp-pp-row > td { padding: 3px 8px; text-align: center; font-weight: 600; }
 .omp-pp-row > td.omp-pending { opacity: .55; font-weight: 400; }
