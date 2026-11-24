@@ -745,7 +745,7 @@ html.omp-accent body :is([class*="supporter"], [class*="supporter"] *) {
 
 /* clearer fail chart on the beatmap page */
 .omp-fc-hidden { display: none !important; }
-.omp-fc { display: flex; flex: 1 1 0; flex-direction: column; min-height: 0; margin: 4px 0 0; font-size: 12px; line-height: 1.35; color: inherit; }
+.omp-fc { position: relative; display: flex; flex: 1 1 0; flex-direction: column; min-height: 0; margin: 4px 0 0; font-size: 12px; line-height: 1.35; color: inherit; }
 .omp-fc-split { display: flex; height: 8px; gap: 2px; margin: 4px 0 6px; border-radius: 4px; overflow: hidden; }
 .omp-fc-split > span { min-width: 0; }
 .omp-fc-pass { background: #7ed957; }
@@ -764,3 +764,7 @@ html.omp-accent body :is([class*="supporter"], [class*="supporter"] *) {
 html.omp-accent .omp-fc-pass { background: color-mix(in srgb, currentColor 55%, transparent); }
 html.omp-accent .omp-fc-failbar, html.omp-accent .omp-fc-fail { background: var(--omp-accent); fill: var(--omp-accent); }
 html.omp-accent .omp-fc-quitbar, html.omp-accent .omp-fc-quit { background: color-mix(in srgb, var(--omp-accent) 50%, #fff); fill: color-mix(in srgb, var(--omp-accent) 50%, #fff); }
+.omp-fc-info { position: absolute; top: -22px; right: 0; display: inline-grid; place-items: center; width: 13px; height: 13px; border: 1px solid currentColor; border-radius: 50%; font-size: 9px; font-style: italic; font-weight: 700; line-height: 1; opacity: .55; cursor: help; }
+.omp-fc-info:hover, .omp-fc-info:focus { opacity: 1; outline: 0; }
+.omp-fc-info::after { content: "Estimate, based on a sample of plays"; position: absolute; right: 0; top: calc(100% + 6px); width: max-content; max-width: 130px; padding: 5px 8px; border-radius: 6px; background: rgba(0, 0, 0, .9); color: #fff; font-size: 11px; font-style: normal; font-weight: 400; line-height: 1.3; text-align: left; opacity: 0; pointer-events: none; transition: opacity .12s; z-index: 5; }
+.omp-fc-info:hover::after, .omp-fc-info:focus::after { opacity: 1; }

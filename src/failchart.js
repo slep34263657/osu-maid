@@ -37,22 +37,16 @@
       const hq = (q[i] / max) * (base - top);
       const hf = (f[i] / max) * (base - top);
       const x = (i * bw).toFixed(2);
-      const label = `${i}%-${i + 1}%: ${num(f[i])} failed, ${num(q[i])} quit`;
-      bars += `<g class="omp-fc-col"><title>${label}</title><rect class="omp-fc-hit" x="${x}" y="0" width="${bw.toFixed(2)}" height="${base}"/>`
+      bars += `<g class="omp-fc-col"><rect class="omp-fc-hit" x="${x}" y="0" width="${bw.toFixed(2)}" height="${base}"/>`
         + (hq ? `<rect class="omp-fc-quit" x="${x}" y="${(base - hq).toFixed(2)}" width="${(bw - 0.5).toFixed(2)}" height="${hq.toFixed(2)}"/>` : '')
         + (hf ? `<rect class="omp-fc-fail" x="${x}" y="${(base - hq - hf).toFixed(2)}" width="${(bw - 0.5).toFixed(2)}" height="${hf.toFixed(2)}"/>` : '')
         + '</g>';
     }
     const ticks = '';
 
-    // where half of the quits / fails happen
-    const half = (a, total) => { let c = 0; for (let i = 0; i < a.length; i++) { c += a[i]; if (c >= total / 2) return i; } return null; };
-    const mq = sq ? half(q, sq) : null;
-    const mf = sf ? half(f, sf) : null;
-    const facts = [mq != null ? `Half of quits by ${mq + 1}%` : '', mf != null ? `half of fails by ${mf + 1}%` : ''].filter(Boolean).join(' · ');
-
     return `
-      <div class="omp-fc-split" title="Shares of all recorded passes, fails and quits. The site records fails and quits from a sample, so treat the shares as approximate.">
+      <span class="omp-fc-info" tabindex="0" aria-label="Estimate based on a sample of plays">i</span>
+      <div class="omp-fc-split">
         <span class="omp-fc-pass" style="flex:${passed}"></span><span class="omp-fc-failbar" style="flex:${sf}"></span><span class="omp-fc-quitbar" style="flex:${sq}"></span>
       </div>
       <div class="omp-fc-legend">
@@ -60,7 +54,7 @@
         <span><i class="omp-fc-failbar"></i>Failed ${pct(sf, events)}</span>
         <span><i class="omp-fc-quitbar"></i>Quit ${pct(sq, events)}</span>
       </div>
-      <svg class="omp-fc-svg" data-facts="${facts}${facts ? ' · ' : ''}tallest bar ${num(max)} players" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Where players fail or quit, by map progress">
+      <svg class="omp-fc-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Where players fail or quit, by map progress">
         <line class="omp-fc-grid" x1="0" x2="${W}" y1="${top}" y2="${top}"/>
         <line class="omp-fc-grid" x1="0" x2="${W}" y1="${(top + base) / 2}" y2="${(top + base) / 2}"/>
         <line class="omp-fc-axis" x1="0" x2="${W}" y1="${base}" y2="${base}"/>
@@ -84,9 +78,7 @@
     const el = document.createElement('div');
     el.className = 'omp-fc';
     el.dataset.id = String(b.id);
-    el.title = el.dataset.facts || '';
     el.innerHTML = build(b);
-    el.title = el.querySelector('svg').dataset.facts;
     orig.after(el);
   }
 
