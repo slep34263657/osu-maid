@@ -817,3 +817,5 @@ html.omp-on .beatmapset-stats__rating-values span:last-child { color: #a5cf1a; }
 /* SS pp line, centred */
 .omp-pp-row > td { padding: 3px 8px; text-align: center; font-weight: 600; }
 .omp-pp-row > td.omp-pending { opacity: .55; font-weight: 400; }
+
+.omp-hide { display: none !important; }

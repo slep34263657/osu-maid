@@ -6,15 +6,7 @@
   const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '0%');
   let queued = false;
 
-  function current() {
-    if (!/^\/beatmapsets\/\d+\/?$/.test(location.pathname)) return null;
-    try {
-      const set = JSON.parse(document.getElementById('json-beatmapset').textContent);
-      const h = location.hash.match(/#\w+\/(\d+)/);
-      if (String(set.id) !== location.pathname.match(/\d+/)[0] || !h) return null;
-      return (set.beatmaps || []).find((b) => String(b.id) === h[1]) || null;
-    } catch { return null; }
-  }
+  const current = () => (OMP.viewMap ? OMP.viewMap() : null);
 
   const sum = (a) => a.reduce((x, y) => x + y, 0);
 
@@ -87,5 +79,6 @@
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
   window.addEventListener('hashchange', schedule);
   OMP.onSettings(schedule);
+  OMP.onHover(schedule);
   schedule();
 })();

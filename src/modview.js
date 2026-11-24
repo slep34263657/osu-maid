@@ -99,22 +99,40 @@
     } catch { return null; }
   }
 
+  // the difficulty under the pointer in the picker (null when it is the selected one)
+  let hoverId = null;
+  let selNow = '';
+  function hovered(sel) {
+    if (!sel || !hoverId || !OMP.settings().hoverStats || String(sel.id) === hoverId) return null;
+    try {
+      const set = JSON.parse(document.getElementById('json-beatmapset').textContent);
+      return (set.beatmaps || []).find((x) => String(x.id) === hoverId) || null;
+    } catch { return null; }
+  }
+  OMP.viewMap = () => { const sel = current(); return hovered(sel) || sel; };
+
   // ---- put values in and take them out again ----
   function swap(el, text, on, attr) {
     if (!el) return;
     const get = () => (attr ? el.getAttribute(attr) : el.textContent);
-    const put = (v) => { if (get() !== v) { if (attr) el.setAttribute(attr, v); else el.textContent = v; } };
+    const put = (v) => {
+      if (get() === v) return;
+      if (attr) { el.setAttribute(attr, v); return; }
+      const tn = [...el.childNodes].find((n) => n.nodeType === 3); // the site's own text node, so its next update still lands
+      if (tn) tn.data = v; else el.textContent = v;
+    };
     const k = attr ? 'ompTitle' : 'ompText';
     const shown = el.dataset[`${k}Shown`];
     if (shown !== undefined && get() !== shown) delete el.dataset[`${k}Orig`];
     if (on) {
-      if (el.dataset[`${k}Orig`] === undefined) el.dataset[`${k}Orig`] = get();
+      if (el.dataset[`${k}Orig`] === undefined) { el.dataset[`${k}Orig`] = get(); el.dataset[`${k}Sel`] = selNow; }
       el.dataset[`${k}Shown`] = text;
       put(text);
     } else if (el.dataset[`${k}Orig`] !== undefined) {
-      if (get() === shown) put(el.dataset[`${k}Orig`]);
+      if (get() === shown && el.dataset[`${k}Sel`] === selNow) put(el.dataset[`${k}Orig`]); // another difficulty got selected meanwhile: the site's text is already the right one
       delete el.dataset[`${k}Orig`];
       delete el.dataset[`${k}Shown`];
+      delete el.dataset[`${k}Sel`];
     }
   }
 
@@ -123,14 +141,30 @@
     const style = () => el.getAttribute('style') || '';
     if (el.dataset.ompStyleShown !== undefined && style() !== el.dataset.ompStyleShown) delete el.dataset.ompStyle;
     if (on && rating != null) {
-      if (el.dataset.ompStyle === undefined) el.dataset.ompStyle = style();
+      if (el.dataset.ompStyle === undefined) { el.dataset.ompStyle = style(); el.dataset.ompStyleSel = selNow; }
       el.style.setProperty(varName, OMP.starColour(rating));
       if (text) el.style.color = OMP.starText(rating);
       el.dataset.ompStyleShown = style();
     } else if (el.dataset.ompStyle !== undefined) {
-      if (style() === el.dataset.ompStyleShown) { if (el.dataset.ompStyle) el.setAttribute('style', el.dataset.ompStyle); else el.removeAttribute('style'); }
+      if (style() === el.dataset.ompStyleShown && el.dataset.ompStyleSel === selNow) { if (el.dataset.ompStyle) el.setAttribute('style', el.dataset.ompStyle); else el.removeAttribute('style'); }
       delete el.dataset.ompStyle;
       delete el.dataset.ompStyleShown;
+      delete el.dataset.ompStyleSel;
+    }
+  }
+
+  // a custom property on `el` (the site writes the success bar this way), put back only if nobody changed it meanwhile
+  function setVar(el, name, value, on) {
+    if (!el) return;
+    if (on) {
+      if (el.dataset.ompVar === undefined) { el.dataset.ompVar = el.style.getPropertyValue(name); el.dataset.ompVarSel = selNow; }
+      el.style.setProperty(name, value);
+      el.dataset.ompVarShown = el.style.getPropertyValue(name);
+    } else if (el.dataset.ompVar !== undefined) {
+      if (el.style.getPropertyValue(name) === el.dataset.ompVarShown && el.dataset.ompVarSel === selNow) { if (el.dataset.ompVar) el.style.setProperty(name, el.dataset.ompVar); else el.style.removeProperty(name); }
+      delete el.dataset.ompVar;
+      delete el.dataset.ompVarShown;
+      delete el.dataset.ompVarSel;
     }
   }
 
@@ -144,6 +178,9 @@
   }
 
   function restoreAll() {
+    document.querySelectorAll('[data-omp-var]').forEach((e) => setVar(e, '--fill', '', false));
+    document.querySelectorAll('.omp-sr-alt').forEach((e) => e.remove());
+    document.querySelectorAll('.omp-hide').forEach((e) => e.classList.remove('omp-hide'));
     document.querySelectorAll('[data-omp-text-orig]').forEach((e) => swap(e, '', false));
     document.querySelectorAll('[data-omp-title-orig]').forEach((e) => swap(e, '', false, 'title'));
     document.querySelectorAll('[data-omp-style]').forEach((e) => tint(e, null, false));
@@ -161,35 +198,45 @@
     const i = combos.indexOf(combo);
     if (on) meta();
     decorateListing(on, i);
-    const b = current();
-    if (!b) { if (!on) restoreAll(); return; }
-    const v = view(b, combo);
+    const sel = current();
+    selNow = sel ? String(sel.id) : '';
+    const hov = hovered(sel);
+    const b = hov || sel;
+    const preview = !!hov;
+    const active = on || preview;
+    if (!b) { if (!active) restoreAll(); return; }
+    const v = view(b, on ? combo : '');
     if (on && v.std) { load('s', b.id); load('p', b.id); }
-    const st = starsOf(b.id, i);
-    const have = on && st !== undefined;
+    const st = on ? starsOf(b.id, i) : (preview ? b.difficulty_rating : undefined);
+    const have = st !== undefined;
     const pr = pp.get(String(b.id));
     const ppv = on && v.std && pr && i >= 0 && typeof pr[i] === 'number' ? pr[i] : undefined;
+    const raw = { cs: b.cs, drain: b.drain, ar: b.ar, od: b.accuracy };
+    const pick = (k) => (on && v.std ? v[k] : on && b.mode === 'fruits' && k === 'ar' ? v.ar : raw[k]);
+    const count = (n) => Number(n || 0).toLocaleString('en-US');
 
     const root = document.querySelector('.beatmapset-stats');
     if (root) {
       root.querySelectorAll('.beatmap-basic-stats__entry').forEach((e) => {
         const t = e.dataset.ompTitleOrig || e.getAttribute('title') || '';
         if (/^Length/.test(t)) {
-          swap(e.querySelector('span'), mmss(b.total_length / v.rate), on);
-          swap(e, `Length (Drain length: ${mmss(b.hit_length / v.rate)})`, on, 'title');
-        } else if (t === 'BPM') swap(e.querySelector('span'), String(Math.round(b.bpm * v.rate)), on);
+          swap(e.querySelector('span'), mmss(b.total_length / v.rate), active);
+          swap(e, `Length (Drain length: ${mmss(b.hit_length / v.rate)})`, active, 'title');
+        } else if (t === 'BPM') swap(e.querySelector('span'), String(Math.round(b.bpm * v.rate)), active);
+        else if (t === 'Circle Count') swap(e.querySelector('span'), count(b.count_circles), preview);
+        else if (t === 'Slider Count') swap(e.querySelector('span'), count(b.count_sliders), preview);
       });
       let starRow = null;
       root.querySelectorAll('.beatmap-stats-table tr:not(.omp-pp-row)').forEach((r) => {
         const label = (r.querySelector('th') || {}).textContent;
         const value = r.querySelector('.beatmap-stats-table__value');
         const bar = r.querySelector('.bar');
-        const set = (x) => { if (x != null) { swap(value, num1(x), on); fill(bar, x, on); } };
-        if (label === 'Circle Size' && v.std) set(v.cs);
-        else if (label === 'HP Drain' && v.std) set(v.drain);
-        else if (label === 'Accuracy') set(v.od);
-        else if (label === 'Approach Rate') set(v.ar);
-        else if (label === 'Star Rating' && v.std) { starRow = r; swap(value, have ? st.toFixed(2) : '', have); fill(bar, have ? st : 0, have); }
+        const set = (x) => { if (x != null) { swap(value, num1(x), active); if (!/Key/.test(label)) fill(bar, x, active); } };
+        if (label === 'Circle Size' || label === 'Key Count') set(pick('cs'));
+        else if (label === 'HP Drain') set(pick('drain'));
+        else if (label === 'Accuracy') set(pick('od'));
+        else if (label === 'Approach Rate') set(pick('ar'));
+        else if (label === 'Star Rating') { starRow = r; swap(value, have ? st.toFixed(2) : '', have); fill(bar, have ? st : 0, have); }
       });
       // the SS pp line, right under the star rating; it is there before the number arrives, so nothing moves when it does
       let row = root.querySelector('.omp-pp-row');
@@ -207,10 +254,33 @@
         cell.classList.toggle('omp-pending', ppv === undefined);
       }
     }
+    // success rate follows the difficulty under the pointer
+    const sr = document.querySelector('.beatmap-success-rate');
+    if (sr) {
+      const play = b.playcount || 0;
+      const pass = b.passcount || 0;
+      // the site's text is several text nodes, so it is hidden and replaced instead of edited
+      const cnt = sr.querySelector('.beatmap-success-rate__count-text');
+      let alt = sr.querySelector('.omp-sr-alt');
+      if (preview && play > 0 && cnt) {
+        if (!alt) { alt = document.createElement('div'); alt.className = 'beatmap-success-rate__count-text omp-sr-alt'; cnt.after(alt); }
+        const msg = `${(pass / play * 100).toFixed(1)}% (${count(pass)} of ${count(play)} plays)`;
+        if (alt.textContent !== msg) alt.textContent = msg;
+        cnt.classList.add('omp-hide');
+      } else {
+        if (alt) alt.remove();
+        if (cnt) cnt.classList.remove('omp-hide');
+      }
+      setVar(sr.querySelector('.bar--beatmap-success-rate'), '--fill', `${play ? pass / play * 100 : 0}%`, preview && play > 0);
+    }
+    // the header badge always shows the selected difficulty
     const badge = document.querySelector('.beatmapset-header__diff-name .difficulty-badge__rating');
-    if (badge && v.std) {
-      swap(badge, have ? st.toFixed(2) : '', have);
-      tint(badge.closest('.difficulty-badge'), have ? st : null, have, '--bg', true);
+    if (badge && sel) {
+      const vs = view(sel, on ? combo : '');
+      const stSel = on ? starsOf(sel.id, i) : undefined;
+      const haveSel = vs.std && stSel !== undefined;
+      swap(badge, haveSel ? stSel.toFixed(2) : '', haveSel);
+      tint(badge.closest('.difficulty-badge'), haveSel ? stSel : null, haveSel, '--bg', true);
     }
     decoratePicker(on, i);
   }
@@ -267,7 +337,13 @@
 
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(() => { try { decorate(); } catch (e) { console.error('[osu! maid]', e); } }); } };
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
-  window.addEventListener('hashchange', schedule);
+  window.addEventListener('hashchange', () => { hoverId = null; OMP.emitHover(); schedule(); });
+  const hoverAt = (id) => { if (id !== hoverId) { hoverId = id; OMP.emitHover(); schedule(); } };
+  document.addEventListener('mouseover', (e) => {
+    const a = e.target.closest && e.target.closest('.beatmapset-beatmap-picker__beatmap');
+    hoverAt(a ? idOf(a.getAttribute('href')) : null);
+  });
+  document.documentElement.addEventListener('mouseleave', () => hoverAt(null));
   OMP.onSettings(schedule);
   schedule();
 })();

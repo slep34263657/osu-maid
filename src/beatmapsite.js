@@ -151,12 +151,8 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
     const mine = document.querySelector('.omp-own');
     let n = null;
     if (on && head) {
-      try {
-        const set = JSON.parse(document.getElementById('json-beatmapset').textContent);
-        const h = location.hash.match(/#\w+\/(\d+)/);
-        const b = String(set.id) === id && h && (set.beatmaps || []).find((x) => String(x.id) === h[1]);
-        if (b && typeof b.current_user_playcount === 'number') n = b.current_user_playcount;
-      } catch { /* no data yet */ }
+      const b = OMP.viewMap && OMP.viewMap();
+      if (b && typeof b.current_user_playcount === 'number') n = b.current_user_playcount;
     }
     if (n === null) { if (mine) mine.remove(); return; }
     const text = ` [${n.toLocaleString('en-US')}]`;
@@ -184,5 +180,6 @@ https://osu.ppy.sh/beatmapsets/${bs.id}${hash ? hash[0] : ''}`, 'map info');
   const schedule = () => { if (!queued) { queued = true; queueMicrotask(() => { try { decorate(); } catch (e) { console.error('[osu! minimal]', e); } }); } };
   new MutationObserver(schedule).observe(html, { childList: true, subtree: true });
   OMP.onSettings(schedule);
+  OMP.onHover(schedule);
   schedule();
 })();

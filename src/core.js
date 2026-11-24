@@ -120,7 +120,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, hoverStats: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.combo = () => (eff().modView ? settings.modCombo || '' : '');
@@ -176,6 +176,9 @@
 
   const listeners = [];
   OMP.onSettings = (fn) => { listeners.push(fn); };
+  const hoverFns = [];
+  OMP.onHover = (fn) => { hoverFns.push(fn); };
+  OMP.emitHover = () => hoverFns.forEach((fn) => { try { fn(); } catch (e) { console.error('[osu! maid]', e); } });
 
   function applySettings(prev) {
     applyScale(settings.scale);
@@ -234,6 +237,7 @@
       ['bgButton', 'Background button'],
       ['compactDl', 'Slim downloads'],
       ['failChart', 'Fail chart'],
+      ['hoverStats', 'Hover stats'],
       ['copyDesc', 'Copy description'],
       ['copyInfo', 'Copy map info'],
       ['ownPlays', 'Own play count'],

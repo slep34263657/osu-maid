@@ -31,6 +31,7 @@ userscript for osu.ppy.sh ♡
 - account settings search
 - mod view button (experimental): stats, stars and SS pp for a mod combo
 - clearer fail chart on beatmap pages
+- hover a difficulty to preview its stats
 - your own play count on beatmap pages
 - search-in buttons on the beatmap listing
 
