@@ -71,8 +71,20 @@
     if (alt.textContent !== other) { alt.textContent = other; alt.title = other; }
   }
 
+  // the thumbnail shows the whole background; the site's own square crop stays underneath in case it is missing
+  function decorateThumb(card, on) {
+    const cover = card.querySelector('.beatmapset-panel__cover-col--play .beatmapset-cover');
+    if (!cover) return;
+    const id = ((card.querySelector('.beatmapset-panel__main-link') || {}).href || '').match(/beatmapsets\/(\d+)/)?.[1];
+    const url = on && id ? `url("https://assets.ppy.sh/beatmaps/${id}/covers/fullsize.jpg")` : '';
+    if (cover.style.getPropertyValue('--omp-thumb') === url) return;
+    if (url) cover.style.setProperty('--omp-thumb', url);
+    else cover.style.removeProperty('--omp-thumb');
+  }
+
   function decorate() {
     const c = cfg();
+    document.querySelectorAll('.beatmapset-panel').forEach((card) => decorateThumb(card, !!c.theme));
     html.classList.toggle('omp-list-outlines', !!c.listOutlines);
     html.classList.toggle('omp-list-titles', !!c.listTitles);
     if (!isListing()) return;
