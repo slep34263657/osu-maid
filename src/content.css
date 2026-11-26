@@ -142,8 +142,9 @@ html.omp-theme .beatmapset-panel:hover,
 html.omp-theme .beatmapset-panel--beatmaps-popup-visible { --info-bg: transparent; --play-bg: transparent; }
 html.omp-theme .beatmapset-panel__cover-container::after { display: none; }
 html.omp-theme .beatmapset-panel__cover-col--info .beatmapset-cover {
-
-  left: calc(-1 * (var(--play-width, 90px) + 10px)); width: calc(100% + var(--play-width, 90px) + 10px); border-radius: 10px;
+  /* starts partway under the thumbnail and fades in, so the two crops don't show through each other */
+  left: -20px; width: calc(100% + 20px); border-radius: 10px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, rgba(0,0,0,.2) 22px, rgba(0,0,0,.7) 55px, #000 90px); mask-image: linear-gradient(90deg, transparent 0, rgba(0,0,0,.2) 22px, rgba(0,0,0,.7) 55px, #000 90px);
   filter: brightness(.16); transition: filter .15s;
 }
 html.omp-theme .beatmapset-panel:hover .beatmapset-panel__cover-col--info .beatmapset-cover,
