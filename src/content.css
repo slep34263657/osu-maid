@@ -124,12 +124,14 @@ html.omp-black .header-v4__bg { filter: grayscale(1) brightness(.28); }
 /* beatmap listing */
 
 .beatmapset-panel:not(.beatmapset-panel--size-extra) {
-  --stats-grid-template: "hype nominations play-count favourite-count bpm date" / auto auto auto auto auto auto;
+  --stats-grid-template: "hype nominations play-count favourite-count bpm length date" / auto auto auto auto auto auto auto;
 }
 .beatmapset-panel.beatmapset-panel--size-extra {
-  --stats-grid-template: "hype play-count date" "nominations favourite-count bpm" / auto auto auto;
+  --stats-grid-template: "hype play-count date date" "nominations favourite-count bpm length" / auto auto auto auto;
 }
 .beatmapset-panel__stats-item--bpm { grid-area: bpm; }
+.beatmapset-panel__stats-item--length { grid-area: length; }
+html.omp-nobpmicon .omp-bpm .beatmapset-panel__stats-item-icon { display: none; }
 
 .beatmapset-panel.beatmapset-panel { --stats-opacity: 1; }
 

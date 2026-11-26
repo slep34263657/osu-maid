@@ -120,7 +120,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, hoverStats: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, hoverStats: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listBpmIcon: false, listLength: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.combo = () => (eff().modView ? settings.modCombo || '' : '');
@@ -259,6 +259,8 @@
     ] },
     { id: 'listing', label: 'Beatmap listing', match: (p) => /^\/beatmapsets\/?$/.test(p), rows: [
       ['listBpm', 'BPM'],
+      ['listBpmIcon', 'BPM icon', 'listBpm'],
+      ['listLength', 'Length'],
       ['listOutlines', 'Status outlines'],
       ['listTitles', 'Other title and artist'],
       ['listMode', 'Remember mode'],

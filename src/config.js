@@ -9,6 +9,8 @@ globalThis.OMP_CONFIG = {
     theme: true,
     scale: 15,
     listBpm: true,
+    listBpmIcon: true,
+    listLength: true,
     listOutlines: false,
     listTitles: true,
     listMode: false,

@@ -1,4 +1,4 @@
-// Beatmap listing: BPM, outlines, other title and artist, remembered mode.
+// Beatmap listing: BPM, length, outlines, other title and artist, remembered mode.
 (() => {
   'use strict';
 
@@ -19,20 +19,32 @@
     seededFor = location.search;
     fetch(`/beatmapsets/search${location.search}`, { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
       .then((r) => r.json())
-      .then((j) => { OMP.emitSearch((j.beatmapsets || []).map((s) => ({ id: s.id, bpm: s.bpm, title: s.title, original: s.title_unicode, artist: s.artist, artistOriginal: s.artist_unicode, maps: (s.beatmaps || []).map((b) => ({ id: b.id, mode: b.mode, r: b.difficulty_rating })) }))); })
+      .then((j) => { OMP.emitSearch((j.beatmapsets || []).map((s) => ({ id: s.id, bpm: s.bpm, length: Math.max(0, ...(s.beatmaps || []).map((b) => b.total_length || 0)), title: s.title, original: s.title_unicode, artist: s.artist, artistOriginal: s.artist_unicode, maps: (s.beatmaps || []).map((b) => ({ id: b.id, mode: b.mode, r: b.difficulty_rating })) }))); })
       .catch(() => { /* the cards just stay as they are */ });
   }
 
   const fmtBpm = (b) => (Number.isInteger(b) ? String(b) : b.toFixed(1));
 
-  function bpmItem() {
-    const item = document.createElement('div');
-    item.className = 'beatmapset-panel__stats-item beatmapset-panel__stats-item--bpm omp-bpm';
-    const icon = document.createElement('span');
-    icon.className = 'beatmapset-panel__stats-item-icon';
-    icon.innerHTML = '<i class="fa-fw fas fa-music"></i>';
-    item.append(icon, document.createElement('span'));
-    return item;
+  const fmtLength = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+  // one extra entry in a card's stats row; no value takes it out again
+  function putStat(row, kind, iconClass, value, title) {
+    let item = row.querySelector(`.omp-${kind}`);
+    if (!value) { if (item) item.remove(); return; }
+    if (!item) {
+      item = document.createElement('div');
+      item.className = `beatmapset-panel__stats-item beatmapset-panel__stats-item--${kind} omp-${kind}`;
+      const icon = document.createElement('span');
+      icon.className = 'beatmapset-panel__stats-item-icon';
+      icon.innerHTML = `<i class="fa-fw ${iconClass}"></i>`;
+      item.append(icon, document.createElement('span'));
+      row.insertBefore(item, row.querySelector('.beatmapset-panel__stats-item--date'));
+    }
+    const key = `${value}|${title}`;
+    if (item.dataset.key === key) return;
+    item.dataset.key = key;
+    item.title = title;
+    item.lastElementChild.textContent = value;
   }
 
   const showsOriginal = () => {
@@ -87,6 +99,7 @@
     document.querySelectorAll('.beatmapset-panel').forEach((card) => decorateThumb(card, !!c.theme));
     html.classList.toggle('omp-list-outlines', !!c.listOutlines);
     html.classList.toggle('omp-list-titles', !!c.listTitles);
+    html.classList.toggle('omp-nobpmicon', !c.listBpmIcon);
     if (!isListing()) return;
 
     let missing = false;
@@ -102,21 +115,13 @@
       decorateTitle(card, meta, !!c.listTitles);
       decorateArtist(card, meta, !!c.listTitles);
 
-      let item = row.querySelector('.omp-bpm');
-      if (!c.listBpm) { if (item) item.remove(); return; }
-      if (!meta || meta.bpm == null) { missing = true; return; }
-      if (!item) {
-        item = bpmItem();
-        row.insertBefore(item, row.querySelector('.beatmapset-panel__stats-item--date'));
-      }
+      if ((c.listBpm || c.listLength) && (!meta || meta.bpm == null)) missing = true;
       const rate = OMP.rate();
-      if (item.dataset.id !== String(id) || item.dataset.rate !== String(rate)) {
-        item.dataset.id = String(id);
-        item.dataset.rate = String(rate);
-        const bpm = rate === 1 ? fmtBpm(meta.bpm) : String(Math.round(meta.bpm * rate));
-        item.title = `BPM: ${bpm}${OMP.combo() ? ` (${OMP.combo()})` : ''}`;
-        item.lastElementChild.textContent = `${bpm} BPM`;
-      }
+      const mods = OMP.combo() ? ` (${OMP.combo()})` : '';
+      const bpm = c.listBpm && meta && meta.bpm != null ? (rate === 1 ? fmtBpm(meta.bpm) : String(Math.round(meta.bpm * rate))) : '';
+      putStat(row, 'bpm', 'fas fa-music', bpm && `${bpm} BPM`, `BPM: ${bpm}${mods}`);
+      const length = c.listLength && meta && meta.length ? fmtLength(Math.round(meta.length / rate)) : '';
+      putStat(row, 'length', 'far fa-clock', length, `Length: ${length}${mods}`);
     });
     if (missing && seededFor !== location.search) seed();
   }
