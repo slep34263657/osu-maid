@@ -129,7 +129,19 @@
   const applyScale = (k) => {
     html.style.setProperty('--omp-k', String(k));
     html.style.setProperty('--omp-nz', eff().theme ? (k / 19).toFixed(3) : '1');
+    requestAnimationFrame(syncNav);
   };
+  // the sticky bars sit right under the nav, so use the nav's real height rather than a calculated one
+  let navObs;
+  function syncNav() {
+    const n = document.querySelector('.nav2-header');
+    if (!n) return;
+    html.style.setProperty('--omp-navh', `${n.getBoundingClientRect().height}px`);
+    if (!navObs && window.ResizeObserver) { navObs = new ResizeObserver(syncNav); navObs.observe(n); }
+  }
+  document.addEventListener('DOMContentLoaded', syncNav);
+  window.addEventListener('load', syncNav);
+  window.addEventListener('resize', syncNav);
 
   const hueOf = (hex) => {
     const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
