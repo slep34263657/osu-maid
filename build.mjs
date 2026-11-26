@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const read = (name) => fs.readFileSync(path.join(root, 'src', name), 'utf8');
 
-const VERSION = '1.10.10';
+const VERSION = '1.10.11';
 const NAME = 'osu! maid';
 const OUT = 'osu-maid.user.js';
 const MASCOT = `data:image/png;base64,${fs.readFileSync(path.join(root, 'mascot.png')).toString('base64')}`;

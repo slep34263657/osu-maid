@@ -99,6 +99,7 @@
     document.querySelectorAll('.beatmapset-panel').forEach((card) => decorateThumb(card, !!c.theme));
     html.classList.toggle('omp-list-outlines', !!c.listOutlines);
     html.classList.toggle('omp-list-titles', !!c.listTitles);
+    html.classList.toggle('omp-nobpm', !c.listBpm);
     html.classList.toggle('omp-nobpmicon', !c.listBpmIcon);
     if (!isListing()) return;
 

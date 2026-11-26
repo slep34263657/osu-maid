@@ -131,7 +131,10 @@ html.omp-black .header-v4__bg { filter: grayscale(1) brightness(.28); }
 }
 .beatmapset-panel__stats-item--bpm { grid-area: bpm; }
 .beatmapset-panel__stats-item--length { grid-area: length; }
-html.omp-nobpmicon .omp-bpm .beatmapset-panel__stats-item-icon { display: none; }
+html.omp-nobpmicon .beatmapset-panel:not(.beatmapset-panel--size-extra) .omp-bpm .beatmapset-panel__stats-item-icon { visibility: hidden; width: 0; margin: 0; padding: 0; overflow: hidden; }
+/* large cards stack the stats in columns: a hidden icon keeps its space, and the length takes the place of a missing BPM */
+html.omp-nobpmicon .beatmapset-panel--size-extra .omp-bpm .beatmapset-panel__stats-item-icon { visibility: hidden; }
+html.omp-nobpm .beatmapset-panel--size-extra .omp-length { grid-area: bpm; }
 
 .beatmapset-panel.beatmapset-panel { --stats-opacity: 1; }
 
