@@ -145,7 +145,7 @@ html.omp-theme .beatmapset-panel__cover-container::after { display: none; }
 html.omp-theme .beatmapset-panel, html.omp-theme .beatmapset-panel::before { background-color: var(--surface) !important; }
 html.omp-theme .beatmapset-panel__cover-col--info .beatmapset-cover {
   /* fades in as the thumbnail fades out: no gap between them, and the two crops barely overlap */
-  left: -30px; width: calc(100% + 30px); border-radius: 10px;
+  left: calc(var(--panel-height, 116px) - var(--play-width, 90px) - 78px); width: calc(100% - var(--panel-height, 116px) + var(--play-width, 90px) + 78px); border-radius: 10px;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, rgba(0,0,0,.1) 13.6px, rgba(0,0,0,.35) 27.2px, rgba(0,0,0,.65) 40.8px, rgba(0,0,0,.9) 54.4px, #000 68px); mask-image: linear-gradient(90deg, transparent 0, rgba(0,0,0,.1) 13.6px, rgba(0,0,0,.35) 27.2px, rgba(0,0,0,.65) 40.8px, rgba(0,0,0,.9) 54.4px, #000 68px);
   filter: brightness(.16); transition: filter .15s;
 }
@@ -153,8 +153,8 @@ html.omp-theme .beatmapset-panel:hover .beatmapset-panel__cover-col--info .beatm
 html.omp-theme .beatmapset-panel--beatmaps-popup-visible .beatmapset-panel__cover-col--info .beatmapset-cover { filter: brightness(.26); }
 
 html.omp-theme .beatmapset-panel__cover-col--play { position: relative; z-index: 1; }
-/* the thumbnail reaches further, so its fade ends where the card art has faded in */
-html.omp-theme .beatmapset-panel .beatmapset-panel__cover-col--play .beatmapset-cover { width: calc(var(--play-width, 90px) + 45px) !important; }
+/* a square thumbnail keeps the art centred and unzoomed; its fade ends where the card art has faded in */
+html.omp-theme .beatmapset-panel .beatmapset-panel__cover-col--play .beatmapset-cover { width: var(--panel-height, 116px) !important; }
 html.omp-theme .beatmapset-panel__content { z-index: 2; }
 html.omp-theme .beatmapset-panel__cover-col--play .beatmapset-cover { -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1.000) 0%, rgba(0,0,0,1.000) 12%, rgba(0,0,0,0.964) 22%, rgba(0,0,0,0.869) 32%, rgba(0,0,0,0.731) 42%, rgba(0,0,0,0.568) 52%, rgba(0,0,0,0.398) 62%, rgba(0,0,0,0.239) 72%, rgba(0,0,0,0.108) 82%, rgba(0,0,0,0.023) 92%, rgba(0,0,0,0.000) 100%); mask-image: linear-gradient(90deg, rgba(0,0,0,1.000) 0%, rgba(0,0,0,1.000) 12%, rgba(0,0,0,0.964) 22%, rgba(0,0,0,0.869) 32%, rgba(0,0,0,0.731) 42%, rgba(0,0,0,0.568) 52%, rgba(0,0,0,0.398) 62%, rgba(0,0,0,0.239) 72%, rgba(0,0,0,0.108) 82%, rgba(0,0,0,0.023) 92%, rgba(0,0,0,0.000) 100%); }
 html.omp-theme .beatmapset-panel:hover .beatmapset-panel__play-container,
