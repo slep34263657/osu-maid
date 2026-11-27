@@ -133,11 +133,18 @@
   };
   // the sticky bars sit right under the nav, so use the nav's real height rather than a calculated one
   let navObs;
+  let navEl;
   function syncNav() {
     const n = document.querySelector('.nav2-header');
     if (!n) return;
+    // moving between pages swaps the nav for a new one, so the watching has to move with it
+    if (n !== navEl && window.ResizeObserver) {
+      navObs = navObs || new ResizeObserver(syncNav);
+      navObs.disconnect();
+      navObs.observe(n);
+      navEl = n;
+    }
     html.style.setProperty('--omp-navh', `${n.getBoundingClientRect().height}px`);
-    if (!navObs && window.ResizeObserver) { navObs = new ResizeObserver(syncNav); navObs.observe(n); }
   }
   document.addEventListener('DOMContentLoaded', syncNav);
   window.addEventListener('load', syncNav);
@@ -408,7 +415,11 @@
     applyScale(settings.scale);
     applyTheme();
     watchStorage();
-    const ensure = () => { if ((document.querySelector('.nav2-header .nav2') || /^\/docs/.test(location.pathname)) && !document.getElementById('omp-tools')) renderTools(); };
+    const ensure = () => {
+      if ((document.querySelector('.nav2-header .nav2') || /^\/docs/.test(location.pathname)) && !document.getElementById('omp-tools')) renderTools();
+      const nav = document.querySelector('.nav2-header');
+      if (nav && nav !== navEl) syncNav();
+    };
     document.addEventListener('DOMContentLoaded', ensure);
     new MutationObserver(ensure).observe(html, { childList: true, subtree: true });
     ensure();
