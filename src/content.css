@@ -66,7 +66,7 @@ html.omp-theme .header-v4__bg { filter: grayscale(1) brightness(.5); }
 }
 
 /* tokens */
-html.omp-theme, #omp-tools, #omp-menu, .omp-site-lb {
+html.omp-theme, #omp-tools, #omp-menu {
   --bg: #0e0e10;
   --surface: #17171a;
   --hover: #222226;
@@ -87,7 +87,7 @@ html.omp-theme, #omp-tools, #omp-menu, .omp-site-lb {
   --radius: 6px;
 }
 
-html.omp-black, html.omp-black #omp-tools, html.omp-black #omp-menu, html.omp-black .omp-site-lb {
+html.omp-black, html.omp-black #omp-tools, html.omp-black #omp-menu {
   --bg: #000;
   --surface: #09090a;
   --hover: #151516;
@@ -216,6 +216,12 @@ html.omp-list-outlines .beatmapset-panel[style*="--omp-status"]::after {
 
 .omp-flag { height: .95em; width: auto; margin-right: .45em; border-radius: 2px; vertical-align: -.1em; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12); }
 
+/* the added score rank needs room in the profile's top row, or the boxes beside it get squashed into their labels */
+.profile-detail-stats__chart-numbers--top:has(.custom-score-rank) .profile-detail-stats__values { column-gap: 14px; }
+.profile-detail-stats__chart-numbers--top:has(.custom-score-rank) .profile-detail-stats__values:has(> .daily-challenge) { column-gap: 6px; }
+/* their names may wrap, but never narrower than the longest word */
+.profile-detail-stats__chart-numbers--top:has(.custom-score-rank) .daily-challenge { min-width: min-content; }
+
 /* score cards on the site's own profile */
 
 html.omp-playart .play-detail[style*="--omp-art"] > .play-detail__group--top {
@@ -279,21 +285,24 @@ html.omp-theme .beatmapset-header__buttons .btn-osu-big:focus-visible {
 .omp-lb { display: flex; flex-direction: column; gap: .5em; font-size: calc(var(--omp-k, 15) * 1px); color: var(--text); }
 .omp-lb-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .omp-lb-tile { min-width: 0; padding: .5em .4em; text-align: center; background: var(--bg); border-radius: var(--radius); }
-.omp-lb-tile span { display: block; font-size: .85em; color: var(--dim); }
-.omp-lb-tile b { display: block; font-size: 1.25em; font-weight: 600; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.omp-lb-tile span { display: block; font-size: .85em; color: var(--text); }
+.omp-lb-tile b { display: block; font-size: 1.25em; font-weight: 600; line-height: 1.25; font-variant-numeric: tabular-nums; color: var(--value); }
 .omp-lb-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; margin-top: .5em; }
 .omp-lb-spark { height: 2.8em; }
 .omp-lb-spark svg { display: block; width: 100%; height: 100%; }
-.omp-lb-spark polyline { fill: none; stroke: var(--dim); stroke-width: 1.25; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.omp-lb-spark polyline { fill: none; stroke: var(--line); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 .omp-lb-stars { display: flex; align-items: flex-end; gap: 3px; height: 2.8em; }
-.omp-lb-stars i { flex: 1; background: var(--dim); border-radius: 2px 2px 0 0; }
+.omp-lb-stars i { flex: 1; min-height: 3px; background: var(--line); border-radius: 2px 2px 0 0; }
+html.omp-lbstars .omp-lb-stars i { background: var(--star); }
+/* the highest ratings run into navy and black, which need an edge to show on a dark page */
+html.omp-lbstars .omp-lb-stars i.omp-lb-darkstar { box-shadow: 0 0 0 1px rgba(255, 255, 255, .35); }
 .omp-lb-src { align-self: flex-end; margin-top: .2em; font-size: .68em; color: var(--hint); text-decoration: none; }
 .omp-lb-src svg { vertical-align: -.12em; margin-left: .25em; }
 .omp-lb-src:hover { color: var(--text); }
 .omp-lb-foot { display: flex; justify-content: space-between; margin-top: .25em; font-size: .75em; color: var(--hint); }
 
-.omp-site-lb { box-sizing: border-box; margin: 20px 0 0; padding: 14px 20px 18px; background: var(--surface); border-radius: 10px; font-family: "Segoe UI", system-ui, sans-serif; color: var(--text); }
-.omp-site-lb h3 { margin: 0 0 .7em; font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--hint); }
+.omp-site-lb { box-sizing: border-box; margin: 20px 0 0; padding: 14px 20px 18px; background: var(--surface); border-radius: 10px; font-family: Torus, Inter, "Helvetica Neue", sans-serif; color: var(--text); }
+.omp-site-lb h3 { margin: 0 0 .7em; font-size: 12px; font-weight: 400; color: var(--text); }
 .omp-site-lb .omp-lb { font-size: 14px; max-width: 34em; }
 
 .omp-site-lb.omp-side { position: absolute; z-index: 1; margin: 0; }
@@ -600,10 +609,15 @@ html.omp-modtext .mod__icon::after {
 .omp-site-lb:not(.omp-side) .omp-lb-src-t { display: none; }
 .omp-site-lb:not(.omp-side) .omp-lb-src svg { margin: 0; width: 1.3em; height: 1.3em; }
 
-html:not(.omp-theme) .omp-site-lb {
-  --surface: hsl(var(--hsl-b4)); --bg: hsl(var(--hsl-b5)); --hover: hsl(var(--hsl-b3)); --border: hsl(var(--hsl-b3));
-  --text: hsl(var(--hsl-c1)); --dim: hsl(var(--hsl-l1)); --hint: hsl(var(--hsl-l2));
+/* the page's own shades, so it follows whatever theme is on: docked it continues the stats area, with tiles like the
+   boxes up there; popped out it is one of those boxes. The graphs stay neutral unless charts take the accent. */
+.omp-site-lb {
+  --surface: hsl(var(--hsl-b5)); --bg: hsl(var(--hsl-b4));
+  --text: hsl(var(--hsl-c1)); --value: hsl(var(--hsl-c2)); --dim: hsl(var(--hsl-l1)); --hint: hsl(var(--hsl-l2));
+  --line: var(--dim); --radius: 4px;
 }
+.omp-site-lb.omp-side { --surface: hsl(var(--hsl-b4)); --bg: hsl(var(--hsl-b6)); }
+html.omp-acc-chart .omp-site-lb { --line: var(--omp-accent, var(--dim)); }
 
 html:not(.omp-theme) #omp-tools {
   --hover: hsla(var(--hsl-c1), .18); --text: hsl(var(--hsl-c1)); --hint: hsla(var(--hsl-c1), .6); --radius: 6px;

@@ -120,7 +120,7 @@
   });
 
   let settings = normalize(store.get() || oldCopy());
-  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, hoverStats: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listBpmIcon: false, listLength: false, listOutlines: false, listTitles: false, listMode: false };
+  const OFF = { theme: false, searchIn: false, ownPlays: false, failChart: false, hoverStats: false, modView: false, docsCode: true, accentOn: false, accentButtons: false, accentLinks: false, accentHighlights: false, accentCharts: false, accent: '', docsTheme: 'off', black: false, playArt: false, lbSide: false, lbStars: false, scoreLayout: false, scoreImage: false, ppDecimals: false, playHours: false, statusColour: false, modIcons: 'site', hideLocked: false, medalLink: false, copyDesc: false, copyInfo: false, modTotal: false, accountSearch: false, lazerboard: false, scoreRank: false, bgPass: false, bgButton: false, compactDl: false, listBpm: false, listBpmIcon: false, listLength: false, listOutlines: false, listTitles: false, listMode: false };
   const eff = () => (settings.enabled ? settings : { ...settings, ...OFF });
   OMP.settings = eff;
   OMP.combo = () => (eff().modView ? settings.modCombo || '' : '');
@@ -177,6 +177,7 @@
     html.classList.toggle('omp-theme', e.theme);
     html.classList.toggle('omp-black', e.theme && e.black);
     html.classList.toggle('omp-playart', !!e.playArt);
+    html.classList.toggle('omp-lbstars', !!e.lbStars);
     html.classList.toggle('omp-scorelayout', !!e.scoreLayout);
     html.classList.toggle('omp-docs', e.docsTheme !== 'off');
     html.classList.toggle('omp-nocode', !e.docsCode);
@@ -230,6 +231,7 @@
       ['playArt', 'Map art on scores'],
       ['lazerboard', 'Lazerboard stats'],
       ['lbSide', 'Pop out', 'lazerboard'],
+      ['lbStars', 'Star colours', 'lazerboard'],
       ['statusColour', 'Status colour'],
       ['scoreRank', 'Score rank'],
       ['medalLink', 'Osekai medal link'],

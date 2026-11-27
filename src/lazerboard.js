@@ -72,7 +72,7 @@
     if (s.length) {
       const smax = Math.max(...s.map((x) => x.count), 1);
       const lo = s[0].srBracket, hi = s[s.length - 1].srBracket;
-      stars = `<div><div class="omp-lb-stars">${s.map((x) => `<i style="height:${Math.max(4, Math.sqrt(x.count / smax) * 100).toFixed(0)}%" title="${x.srBracket}-${x.srBracket + 1}★: ${num(x.count)}"></i>`).join('')}</div><div class="omp-lb-foot"><span>${lo}★</span><span>${hi}★+</span></div></div>`;
+      stars = `<div><div class="omp-lb-stars">${s.map((x) => { const sr = x.srBracket + 0.5; return `<i${sr >= 7 ? ' class="omp-lb-darkstar"' : ''} style="height:${Math.max(4, Math.sqrt(x.count / smax) * 100).toFixed(0)}%;--star:${OMP.starColour(sr)}" title="${x.srBracket}-${x.srBracket + 1}★: ${num(x.count)}"></i>`; }).join('')}</div><div class="omp-lb-foot"><span>${lo}★</span><span>${hi}★+</span></div></div>`;
     }
     const source = userId ? `<a class="omp-lb-src" href="https://lazerboard.melguy.com/users/${encodeURIComponent(userId)}" target="_blank" rel="noopener" title="Info from Lazerboard: open this player on Lazerboard"><span class="omp-lb-src-t">Info from Lazerboard</span> <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a>` : '';
     return `<div class="omp-lb">${rows}${spark || stars ? `<div class="omp-lb-charts">${spark}${stars}</div>` : ''}${source}</div>`;

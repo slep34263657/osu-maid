@@ -20,6 +20,7 @@ globalThis.OMP_CONFIG = {
     playArt: true,
     lazerboard: true,
     lbSide: false,
+    lbStars: false,
     scoreRank: true,
     black: false,
     accountSearch: true,
