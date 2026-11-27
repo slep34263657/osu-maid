@@ -45,7 +45,8 @@ html.omp-theme .header-v4__bg { filter: grayscale(1) brightness(.5); }
 
   html.omp-theme .nav2-header { zoom: var(--omp-nz); border-bottom: 1px solid var(--border); }
 
-  html.omp-theme .sticky-toolbar { top: var(--omp-navh, calc(50px * var(--omp-nz) + 1px)) !important; }
+  /* tucked 2px under the nav: lined up exactly, rounding at some screen scalings leaves a hairline between them */
+  html.omp-theme .sticky-toolbar { top: calc(var(--omp-navh, calc(50px * var(--omp-nz) + 1px)) - 2px) !important; }
   html.omp-theme .nav2-header .osu-page { max-width: none !important; width: auto !important; margin: 0 !important; }
 
   html.omp-theme .nav2-header .sticky-header .osu-page { max-width: var(--page-width, 1200px) !important; width: 100% !important; margin: 0 auto !important; }
